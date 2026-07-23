@@ -2,6 +2,7 @@ import { ArrowRight, GitBranch, Mail, Send, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { events, projects, technologies } from '@/constants/content'
 import { Button, SectionHeading } from '@/components/ui/primitives'
+import { TechnologyLogo } from '@/components/ui/technology-logo'
 
 const reveal = { initial: { opacity: 0, y: 24, filter: 'blur(8px)' }, whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' }, viewport: { once: true, amount: 0.2 }, transition: { duration: 0.7 } }
 
@@ -15,7 +16,7 @@ export function Projects() {
 }
 
 export function TechStack() {
-  return <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Crafted with precision" title={<>Наш <span className="text-gradient">стек</span></>} description="Инструменты, которые станут основой для будущих продуктов и экспериментов." /></motion.div><div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{technologies.map((tech, i) => <motion.div key={tech} {...reveal} transition={{ duration: .45, delay: Math.min(i * .025, .35) }} className="group rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />{tech}</motion.div>)}</div></section>
+  return <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Crafted with precision" title={<>Наш <span className="text-gradient">стек</span></>} description="Инструменты, которые станут основой для будущих продуктов и экспериментов." /></motion.div><div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{technologies.map((tech, i) => <motion.div key={tech} {...reveal} transition={{ duration: .45, delay: Math.min(i * .025, .35) }} className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"><span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />{tech}</span><span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span></motion.div>)}</div></section>
 }
 
 export function Events() {
