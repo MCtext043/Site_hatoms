@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import Lenis from 'lenis'
 import { AmbientBackground } from '@/components/layout/ambient-background'
-import { Navbar } from '@/components/layout/navbar'
+import { Navbar } from '@/components/layout/navbar-logo'
 import { Footer } from '@/components/sections/landing-sections'
 
 const HomePage = lazy(() => import('@/pages/home-page'))

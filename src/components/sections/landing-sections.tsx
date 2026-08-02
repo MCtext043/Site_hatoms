@@ -3,12 +3,37 @@ import { motion } from 'framer-motion'
 import { events, projects, technologies } from '@/constants/content'
 import { Button, SectionHeading } from '@/components/ui/primitives'
 import { TechnologyLogo } from '@/components/ui/technology-logo'
+import teamLogo from '@/assets/hatoms-wordmark.png'
 
 const reveal = { initial: { opacity: 0, y: 24, filter: 'blur(8px)' }, whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' }, viewport: { once: true, amount: 0.2 }, transition: { duration: 0.7 } }
 
-export function Hero() {
+function LegacyHero() {
   const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
   return <section id="home" className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-6xl items-center px-5 pb-20 pt-24 sm:px-8"><div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_.85fr]"><motion.div {...reveal}><p className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[.24em] text-cyan-200/70"><Sparkles className="h-3.5 w-3.5" /> Digital product studio</p><h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Placeholder <span className="text-gradient">Title</span></h1><p className="mt-7 max-w-xl text-pretty text-base leading-7 text-zinc-400 sm:text-lg">We create digital experiences for ideas that refuse to stay ordinary. Placeholder copy for a future team story.</p><div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div></motion.div><motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md"><div className="absolute inset-[13%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" /><div className="absolute inset-[23%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" /><div className="absolute inset-[33%] grid place-items-center rounded-full bg-gradient-to-br from-cyan-200 to-violet-500 text-4xl text-black shadow-[0_0_70px_rgba(124,58,237,.45)]">✦</div><div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div><div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div></motion.div></div></section>
+}
+
+export function Hero() {
+  const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
+
+  return (
+    <section id="home" className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-6xl items-center px-5 pb-20 pt-24 sm:px-8">
+      <div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_.85fr]">
+        <motion.div {...reveal}>
+          <p className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[.24em] text-cyan-200/70"><Sparkles className="h-3.5 w-3.5" /> Минимум вопросов. Максимум действий</p>
+          <h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Hatoms <span className="text-gradient">company</span></h1>
+          <p className="mt-7 max-w-xl text-pretty text-base leading-7 text-zinc-400 sm:text-lg">Мы создаём цифровые решения для идей, которые не хотят оставаться обычными. Текст-заглушка для будущей истории команды.</p>
+          <div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md">
+          <div className="absolute inset-[10%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" />
+          <div className="absolute inset-[18%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" />
+<div className="absolute inset-[15%] grid place-items-center"><img src={teamLogo} alt="Логотип команды Hatoms" className="h-full w-full object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" /></div>
+          <div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div>
+          <div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div>
+        </motion.div>
+      </div>
+    </section>
+  )
 }
 
 export function Projects() {
