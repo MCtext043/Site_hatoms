@@ -1,7 +1,8 @@
 import { ArrowRight, ExternalLink, GitBranch, GraduationCap, Mail, Send, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { events, projects, technologies } from '@/constants/content'
+import { events, primaryTechnologies, projects, technologies, technologyCategories } from '@/constants/content'
 import { Button, SectionHeading } from '@/components/ui/primitives'
 import { TechnologyLogo } from '@/components/ui/technology-logo'
 import teamLogo from '@/assets/hatoms-wordmark.png'
@@ -28,7 +29,7 @@ export function Hero() {
         <motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md">
           <div className="absolute inset-[10%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" />
           <div className="absolute inset-[18%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" />
-<div className="absolute inset-[15%] grid place-items-center"><img src={teamLogo} alt="Логотип команды Hatoms" className="h-full w-full object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" /></div>
+          <div className="absolute inset-[15%] grid place-items-center"><img src={teamLogo} alt="Логотип команды Hatoms" className="h-full w-full object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" /></div>
           <div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div>
           <div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div>
         </motion.div>
@@ -38,23 +39,119 @@ export function Hero() {
 }
 
 export function Projects() {
-  return <section id="projects" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Здесь появятся кейсы, которые расскажут о задаче, процессе и измеримом результате." /></motion.div><div className="mt-12 grid gap-4 md:grid-cols-3">{projects.map((project, i) => <motion.article key={project.number} {...reveal} transition={{ duration: .65, delay: i * .08 }} className="group overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117]/75 p-4 transition hover:-translate-y-1 hover:border-cyan-200/30 hover:shadow-[0_16px_60px_rgba(0,212,255,.08)]"><div className={`relative aspect-[1.15] overflow-hidden rounded-xl bg-gradient-to-br ${project.tone}`}><span className="absolute left-4 top-4 font-mono text-xs text-white/60">{project.number}</span><div className="absolute inset-x-5 bottom-5 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent transition duration-500 group-hover:scale-x-150" /></div><div className="px-2 pb-2 pt-5"><h3 className="text-xl font-medium text-white">{project.title}</h3><p className="mt-3 text-sm leading-6 text-zinc-400">{project.description}</p><div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-zinc-300">{tag}</span>)}</div><button className="mt-6 flex items-center gap-2 text-sm text-cyan-100">View placeholder <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></button></div></motion.article>)}</div></section>
+  return <section id="projects" className="mx-auto max-w-6xl px-5 py-32 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div><div className="mt-14 grid gap-5 md:grid-cols-3">{projects.map((project, i) => <motion.article key={project.number} {...reveal} transition={{ duration: .65, delay: i * .08 }} className="group overflow-hidden rounded-[1.75rem] border border-white/[.09] bg-white/[.035] p-3 transition duration-500 hover:-translate-y-2 hover:border-violet-200/30 hover:bg-white/[.06]"><div className={`relative aspect-[1.08] overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${project.tone}`}><span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-black/25 font-mono text-xs text-white/75 backdrop-blur">{project.number}</span><div className="absolute inset-x-6 bottom-6 h-px origin-left bg-white/70 transition duration-500 group-hover:scale-x-150" /></div><div className="px-3 pb-3 pt-6"><h3 className="text-xl font-medium text-white">{project.title}</h3><p className="mt-3 text-sm leading-6 text-zinc-400">{project.description}</p><div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full bg-white/[.06] px-3 py-1.5 text-[11px] text-zinc-300">{tag}</span>)}</div><button className="mt-7 flex items-center gap-2 text-sm font-medium text-[#c8fff4]">Открыть кейс <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></button></div></motion.article>)}</div></section>
+}
+
+/* function ProviderIcon({ provider }: { provider: 'yandex' | 'samsung' | 't' }) {
+  if (provider === 'yandex') return <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#fc3f1d] text-lg font-bold text-white">Я</span>
+  if (provider === 'samsung') return <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#1428a0] text-xl text-white"><SiSamsung /></span>
+  return <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#ffdd2d] text-xl font-bold text-black">Т</span>
+}
+
+function LegacyTechStack() {
+  const certifications = [
+    { title: 'Samsung Innovation Campus', provider: 'samsung' as const, documents: [{ label: 'Александр Дерендяев', url: '/certificates/samsung/derendyaev' }, { label: 'Виктор Мироненко', url: '/certificates/samsung/mironenko' }] },
+    { title: 'Яндекс Лицей', provider: 'yandex' as const, documents: [{ label: 'Александр Дерендяев', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2501190050&lastName=Дерендяев' }, { label: 'Виктор Мироненко', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2502208312&lastName=Мироненко' }] },
+    { title: 'Т-Образование', provider: 't' as const, courses: ['Алгоритмы и структуры данных', 'Android для начинающих'] },
+  ]
+
+  return <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Crafted with precision" title={<>Наш <span className="text-gradient">стек</span></>} description="Инструменты, которые станут основой для будущих продуктов и экспериментов." /></motion.div><div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{technologies.map((tech, i) => <motion.div key={tech} {...reveal} transition={{ duration: .45, delay: Math.min(i * .025, .35) }} className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"><span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />{tech}</span><span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span></motion.div>)}</div><motion.div {...reveal} className="mt-16"><div className="mb-6 flex items-center gap-3"><GraduationCap className="h-5 w-5 text-cyan-200" /><h3 className="text-2xl font-medium tracking-[-0.03em] text-white">Сертифицированное образование</h3></div><div className="grid gap-3 md:grid-cols-3">{certifications.map((certification, i) => <motion.article key={certification.title} {...reveal} transition={{ duration: .45, delay: i * .08 }} className="flex min-h-48 flex-col justify-between rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-cyan-200/30 hover:bg-cyan-300/[.05]"><div><ProviderIcon provider={certification.provider} /><h4 className="mt-4 text-base font-medium leading-6 text-white">{certification.title}</h4>{certification.courses && <ul className="mt-3 space-y-1.5 text-sm leading-5 text-zinc-400">{certification.courses.map(course => <li key={course}>— {course}</li>)}</ul>}</div>{certification.documents && <details className="group mt-5"><summary className="flex w-fit list-none items-center gap-2 rounded-full border border-cyan-200/25 bg-cyan-300/[.07] px-3 py-2 text-xs text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"><span>Проверить документы</span><ExternalLink className="h-3.5 w-3.5" /></summary><div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-black/20 p-3">{certification.documents.map(document => <a key={document.label} href={document.url} target={document.url.startsWith('http') ? '_blank' : undefined} rel={document.url.startsWith('http') ? 'noreferrer' : undefined} className="flex items-center justify-between gap-3 text-xs text-zinc-300 transition hover:text-cyan-100"><span>{document.label}</span><ExternalLink className="h-3.5 w-3.5 shrink-0" /></a>)}</div></details>}</motion.article>)}</div></motion.div></section>
+} */
+
+function LegacyTechStack() {
+  const providers = [
+    { title: 'Samsung Innovation Campus', logo: '/logos/education/samsung.svg', documentsUrl: '/certificates/samsung' },
+    { title: 'Яндекс Лицей', logo: '/logos/education/yandex.svg', documentsUrl: '/certificates/yandex' },
+    { title: 'Т-Образование', logo: '/logos/education/t-education.jpg', courses: ['Алгоритмы и структуры данных', 'Android для начинающих'] },
+  ]
+  return <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Crafted with precision" title={<>Наш <span className="text-gradient">стек</span></>} description="Инструменты, которые станут основой для будущих продуктов и экспериментов." /></motion.div><div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{technologies.map((tech, i) => <motion.div key={tech} {...reveal} transition={{ duration: .45, delay: Math.min(i * .025, .35) }} className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"><span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400" />{tech}</span><span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"><TechnologyLogo name={tech} /></span></motion.div>)}</div><motion.div {...reveal} className="mt-16"><div className="mb-6 flex items-center gap-3"><GraduationCap className="h-5 w-5 text-cyan-200" /><h3 className="text-2xl font-medium tracking-[-0.03em] text-white">Сертифицированное образование</h3></div><div className="grid gap-3 md:grid-cols-3">{providers.map((provider, i) => <motion.article key={provider.title} {...reveal} transition={{ duration: .45, delay: i * .08 }} className="relative flex min-h-48 flex-col justify-between rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-cyan-200/30 hover:bg-cyan-300/[.05]"><span className="absolute left-5 top-5 h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_12px_#8b5cf6]" /><img src={provider.logo} alt={`Логотип ${provider.title}`} className="mt-5 h-10 w-24 object-contain object-left" /><div><h4 className="text-base font-medium leading-6 text-white">{provider.title}</h4>{provider.courses && <ul className="mt-3 space-y-1.5 text-sm leading-5 text-zinc-400">{provider.courses.map(course => <li key={course}>— {course}</li>)}</ul>}</div>{provider.documentsUrl && <a href={provider.documentsUrl} className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-cyan-200/25 bg-cyan-300/[.07] px-3 py-2 text-xs text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20">Проверить документы <ExternalLink className="h-3.5 w-3.5" /></a>}</motion.article>)}</div></motion.div></section>
+}
+
+function AllCategoriesTechStack() {
+  return (
+    <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8">
+      <motion.div {...reveal}>
+        <SectionHeading
+          eyebrow="Crafted with precision"
+          title={<>Наш <span className="text-gradient">стек</span></>}
+          description="Инструменты и подходы, которые используем для создания продуктов. Наведите курсор на технологию, чтобы увидеть её логотип."
+        />
+      </motion.div>
+
+      <div className="mt-12 space-y-12">
+        {technologyCategories.map((category, categoryIndex) => (
+          <motion.div key={category.title} {...reveal} transition={{ duration: .45, delay: Math.min(categoryIndex * .06, .35) }}>
+            <h3 className="mb-5 text-lg font-medium tracking-[-.02em] text-white sm:text-xl">{category.title}</h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {category.technologies.map((tech, index) => (
+                <motion.div
+                  key={`${category.title}-${tech}`}
+                  {...reveal}
+                  transition={{ duration: .4, delay: Math.min(index * .02, .25) }}
+                  className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"
+                >
+                  <span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0">
+                    <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />
+                    {tech}
+                  </span>
+                  <span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]">
+                    <TechnologyLogo name={tech} />
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 export function TechStack() {
-  const certifications = [
-    { title: 'Samsung Innovation Campus' },
-    {
-      title: 'Яндекс Лицей',
-      certificates: [
-        { label: 'Проверить сертификат Дерендяева', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2501190050&lastName=Дерендяев' },
-        { label: 'Проверить сертификат Мироненко', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2502208312&lastName=Мироненко' },
-      ],
-    },
-    { title: 'Т-Поколение', courses: ['Алгоритмы и структуры данных', 'Android для начинающих'] },
-  ]
+  const [activeCategoryTitle, setActiveCategoryTitle] = useState<string>(technologyCategories[0].title)
+  const activeCategory = technologyCategories.find(category => category.title === activeCategoryTitle) ?? technologyCategories[0]
 
-  return <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Crafted with precision" title={<>Наш <span className="text-gradient">стек</span></>} description="Инструменты, которые станут основой для будущих продуктов и экспериментов." /></motion.div><div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{technologies.map((tech, i) => <motion.div key={tech} {...reveal} transition={{ duration: .45, delay: Math.min(i * .025, .35) }} className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white"><span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />{tech}</span><span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span></motion.div>)}</div><motion.div {...reveal} className="mt-16"><div className="mb-6 flex items-center gap-3"><GraduationCap className="h-5 w-5 text-cyan-200" /><h3 className="text-2xl font-medium tracking-[-0.03em] text-white">Сертифицированное образование</h3></div><div className="grid gap-3 md:grid-cols-3">{certifications.map((certification, i) => <motion.article key={certification.title} {...reveal} transition={{ duration: .45, delay: i * .08 }} className="flex min-h-40 flex-col justify-between rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-cyan-200/30 hover:bg-cyan-300/[.05]"><div><span className="inline-block h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_9px_#8b5cf6]" /><h4 className="mt-4 text-base font-medium leading-6 text-white">{certification.title}</h4>{certification.courses && <ul className="mt-3 space-y-1.5 text-sm leading-5 text-zinc-400">{certification.courses.map(course => <li key={course}>— {course}</li>)}</ul>}</div>{certification.certificates && <div className="mt-5 flex gap-2">{certification.certificates.map(certificate => <a key={certificate.label} href={certificate.url} target="_blank" rel="noreferrer" aria-label={certificate.label} title={certificate.label} className="grid h-9 w-9 place-items-center rounded-full border border-cyan-200/25 bg-cyan-300/[.07] text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20 hover:text-white"><ExternalLink className="h-4 w-4" /></a>)}</div>}{certification.title === 'Samsung Innovation Campus' && <div className="mt-5 flex gap-2"><a href="/certificates/samsung/derendyaev" aria-label="Сертификат Александра Дерендяева" title="Александр Дерендяев" className="grid h-9 w-9 place-items-center rounded-full border border-cyan-200/25 bg-cyan-300/[.07] text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20 hover:text-white"><GraduationCap className="h-4 w-4" /></a><a href="/certificates/samsung/mironenko" aria-label="Сертификат Виктора Мироненко" title="Виктор Мироненко" className="grid h-9 w-9 place-items-center rounded-full border border-cyan-200/25 bg-cyan-300/[.07] text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20 hover:text-white"><GraduationCap className="h-4 w-4" /></a></div>}</motion.article>)}</div></motion.div></section>
+  return (
+    <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8">
+      <motion.div {...reveal}>
+        <SectionHeading
+          eyebrow="Crafted with precision"
+          title={<>Наш <span className="text-gradient">стек</span></>}
+          description="Ключевые технологии команды и полный стек по направлениям."
+        />
+      </motion.div>
+
+      <motion.div {...reveal} className="mt-12">
+        <h3 className="mb-5 text-lg font-medium tracking-[-.02em] text-white sm:text-xl">Основные технологии</h3>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {primaryTechnologies.map(tech => (
+            <div key={tech} className="group relative flex min-h-20 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/20 bg-cyan-300/[.045] px-3 py-4 text-center text-sm text-zinc-200 transition hover:scale-[1.025] hover:border-cyan-200/50 hover:bg-cyan-300/[.1] hover:text-white">
+              <span className="transition-all duration-300 group-hover:translate-y-2 group-hover:opacity-0">{tech}</span>
+              <span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      <motion.div {...reveal} className="mt-14">
+        <div className="flex flex-wrap gap-2">
+          {technologyCategories.map(category => {
+            const isActive = category.title === activeCategory.title
+            return <button key={category.title} type="button" onClick={() => setActiveCategoryTitle(category.title)} aria-pressed={isActive} className={`rounded-full border px-4 py-2 text-sm transition ${isActive ? 'border-cyan-200/60 bg-cyan-300/15 text-cyan-100 shadow-[0_0_18px_rgba(0,212,255,.14)]' : 'border-white/10 bg-white/[.025] text-zinc-400 hover:border-violet-200/35 hover:bg-white/[.06] hover:text-white'}`}>{category.title}</button>
+          })}
+        </div>
+
+        <motion.div key={activeCategory.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .25 }} className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {activeCategory.technologies.map(tech => (
+            <div key={tech} className="group relative flex min-h-20 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[.025] px-4 py-4 text-sm text-zinc-300 transition hover:scale-[1.025] hover:border-cyan-200/30 hover:bg-cyan-300/[.05] hover:text-white">
+              <span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-0"><span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-violet-400 transition group-hover:bg-cyan-300 group-hover:shadow-[0_0_9px_#00d4ff]" />{tech}</span>
+              <span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span>
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  )
 }
 
 export function Events() {

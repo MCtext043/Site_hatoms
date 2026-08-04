@@ -5,6 +5,7 @@ import { AmbientBackground } from '@/components/layout/ambient-background'
 import { Navbar } from '@/components/layout/navbar-logo'
 import { Footer } from '@/components/sections/landing-sections'
 import CertificatePage from '@/pages/certificate-page'
+import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
 import { events } from '@/constants/content'
 
@@ -30,8 +31,13 @@ export default function App() {
     '/certificates/samsung/mironenko': { name: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.png' },
   } as const
   const certificate = certificates[pathname as keyof typeof certificates]
+  const certificateCollections = {
+    '/certificates/samsung': { title: 'Samsung Innovation Campus', documents: [{ label: 'Александр Дерендяев', image: '/certificates/samsung-derendyaev.png' }, { label: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.png' }] },
+    '/certificates/yandex': { title: 'Яндекс Лицей', documents: [{ label: 'Александр Дерендяев', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2501190050&lastName=Дерендяев' }, { label: 'Виктор Мироненко', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2502208312&lastName=Мироненко' }] },
+  } as const
+  const certificateCollection = certificateCollections[pathname as keyof typeof certificateCollections]
   const eventSlug = pathname.match(/^\/events\/([^/]+)$/)?.[1]
   const event = events.find((item) => item.slug === eventSlug)
 
-  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : event ? <EventPage {...event} /> : <><Navbar /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer /></>}</div>
+  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} /> : <><Navbar /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer /></>}</div>
 }
