@@ -12,6 +12,11 @@ body { margin: 0; min-width: 320px; background: #05060a; color: #f4f4f5; font-fa
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; cursor: pointer; }
 h1, h2, h3 { font-family: var(--font-display); }
+.request-modal-scroll { scrollbar-color: #3f3f46 #090b11; scrollbar-width: thin; }
+.request-modal-scroll::-webkit-scrollbar { width: 10px; }
+.request-modal-scroll::-webkit-scrollbar-track { background: #090b11; }
+.request-modal-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border: 3px solid #090b11; border-radius: 999px; }
+.request-modal-scroll::-webkit-scrollbar-thumb:hover { background: #71717a; }
 ::selection { background: rgba(0, 212, 255, .3); color: white; }
 .text-gradient { background: linear-gradient(105deg, #e9feff 10%, #00d4ff 43%, #a78bfa 78%, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .grid-bg { background-image: linear-gradient(rgba(148,163,184,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.045) 1px, transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(to bottom, black, transparent 78%); }

@@ -1,9 +1,9 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 import { AmbientBackground } from '@/components/layout/ambient-background'
 import { Navbar } from '@/components/layout/navbar-logo'
-import { Footer } from '@/components/sections/landing-sections'
+import { Footer, ProjectRequestModal } from '@/components/sections/landing-sections'
 import CertificatePage from '@/pages/certificate-page'
 import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
@@ -13,6 +13,7 @@ const HomePage = lazy(() => import('@/pages/home-page'))
 
 export default function App() {
   const { pathname, state } = useLocation()
+  const [requestOpen, setRequestOpen] = useState(false)
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const lenis = new Lenis({ duration: 1.05, smoothWheel: true })
@@ -39,5 +40,5 @@ export default function App() {
   const eventSlug = pathname.match(/^\/events\/([^/]+)$/)?.[1]
   const event = events.find((item) => item.slug === eventSlug)
 
-  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} /> : <><Navbar /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer /></>}</div>
+  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div>
 }

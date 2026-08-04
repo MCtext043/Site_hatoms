@@ -1,6 +1,6 @@
-import { ArrowRight, ExternalLink, GitBranch, GraduationCap, Mail, Send, Sparkles } from 'lucide-react'
+import { ArrowRight, ChevronDown, ExternalLink, GraduationCap, Send, Sparkles, X } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { events, primaryTechnologies, projects, technologies, technologyCategories } from '@/constants/content'
 import { Button, SectionHeading } from '@/components/ui/primitives'
@@ -158,6 +158,92 @@ export function Events() {
   return <section id="events" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="In motion" title={<>Мероприятия и <span className="text-gradient">события</span></>} /></motion.div><div className="mt-12 border-l border-white/10 pl-6 sm:pl-10">{events.map((event, i) => <motion.article key={event.slug} {...reveal} transition={{ duration: .6, delay: i * .1 }} className="relative mb-10 last:mb-0"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-[#05060a] bg-cyan-300 shadow-[0_0_14px_#00d4ff] sm:-left-[47px]" /><p className="font-mono text-xs tracking-wider text-cyan-200/70">{event.date}</p><Link to={`/events/${event.slug}`} className="group mt-3 block rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-violet-300/30 hover:bg-white/[.04] focus:outline-none focus:ring-2 focus:ring-cyan-300/70"><h3 className="text-lg font-medium text-white">{event.title}</h3>{(event.summary || event.subtitle) && <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{event.summary || event.subtitle}</p>}<span className="mt-4 inline-flex items-center gap-2 text-sm text-violet-200">Подробнее <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></Link></motion.article>)}</div></section>
 }
 
-export function Footer() {
-  return <footer id="contacts" className="border-t border-white/10 px-5 py-14 sm:px-8"><div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-end md:justify-between"><div><p className="text-xs uppercase tracking-[.2em] text-cyan-200/70">Let’s make an impact</p><h2 className="mt-3 text-3xl font-semibold tracking-[-.05em] text-white">Placeholder contact.</h2><a className="mt-5 inline-block text-zinc-400 transition hover:text-white" href="mailto:hello@example.com">hello@example.com</a></div><div className="flex gap-3">{[{ icon: Send, label: 'Telegram' }, { icon: GitBranch, label: 'GitHub' }, { icon: Mail, label: 'Email' }].map(({ icon: Icon, label }) => <a key={label} href="#contacts" aria-label={label} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-zinc-300 transition hover:border-cyan-200/40 hover:bg-cyan-300/10 hover:text-cyan-100"><Icon className="h-4 w-4" /></a>)}</div></div><div className="mx-auto mt-12 max-w-6xl border-t border-white/10 pt-5 text-xs text-zinc-600">© {new Date().getFullYear()} HATOMS. Placeholder portfolio.</div></footer>
+export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [requestType, setRequestType] = useState<'idea' | 'help'>('idea')
+  const [submitted, setSubmitted] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+    }
+  }, [open])
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    const contacts = ['phone', 'email', 'telegram'].map((name) => form.elements.namedItem(name) as HTMLInputElement | null)
+    const hasContact = contacts.some((field) => field?.value.trim())
+    contacts.forEach((field) => field?.setCustomValidity(hasContact ? '' : 'Укажите хотя бы один способ связи.'))
+
+    if (!form.checkValidity()) return
+    setSubmitted(true)
+  }
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="request-title" onMouseDown={onClose}>
+      <div data-lenis-prevent className="request-modal-scroll relative max-h-[90svh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-[1.75rem] border border-white/10 bg-[#090b11] p-5 shadow-2xl sm:p-7" onMouseDown={(event) => event.stopPropagation()}>
+        <button type="button" onClick={onClose} aria-label="Закрыть заявку" className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full border border-white/10 text-zinc-300 transition hover:border-cyan-200/40 hover:text-white"><X className="h-5 w-5" /></button>
+        <div className="max-w-2xl pr-12">
+        <p className="text-xs uppercase tracking-[.2em] text-cyan-200/70">Оставить заявку</p>
+        <h2 id="request-title" className="mt-3 text-3xl font-semibold tracking-[-.05em] text-white sm:text-4xl">Давайте обсудим ваш будущий проект</h2>
+        <p className="mt-4 text-sm leading-6 text-zinc-400 sm:text-base">Выберите подходящий формат — детали можно уточнить позже.</p>
+      </div>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        <button type="button" onClick={() => { setRequestType('idea'); setSubmitted(false) }} aria-pressed={requestType === 'idea'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'idea' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
+          <span className="text-base font-medium text-white">У меня есть идея</span>
+          <span className="mt-2 block text-sm leading-5 text-zinc-400">Знаю, что хочу создать, и готов рассказать о проекте.</span>
+        </button>
+        <button type="button" onClick={() => { setRequestType('help'); setSubmitted(false) }} aria-pressed={requestType === 'help'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'help' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
+          <span className="text-base font-medium text-white">Нужна помощь с идеей</span>
+          <span className="mt-2 block text-sm leading-5 text-zinc-400">Есть задача или желание сделать что-то новое, но пока без точного решения.</span>
+        </button>
+      </div>
+
+      <form onSubmit={submit} className="mt-6 rounded-[1.75rem] border border-white/10 bg-white/[.025] p-5 sm:p-7">
+        {requestType === 'idea' ? <div className="grid gap-5 md:grid-cols-2">
+          <label className="md:col-span-2"><span className="text-sm text-zinc-300">Название проекта</span><input name="projectName" required className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Например, сервис доставки" /></label>
+          <label className="md:col-span-2"><span className="text-sm text-zinc-300">Чем занимается организация</span><input name="organization" required className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Коротко расскажите о вашей сфере" /></label>
+          <label className="md:col-span-2"><span className="text-sm text-zinc-300">Опишите идею</span><textarea name="idea" required rows={5} className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Какую задачу должен решать проект?" /></label>
+          <fieldset className="md:col-span-2"><legend className="text-sm text-zinc-300">Что вам нужно?</legend><div className="mt-3 flex flex-wrap gap-2">{['Сайт', 'Мобильное приложение', 'Telegram-бот', 'Telegram Mini App', 'Desktop-приложение', 'Робототехника'].map((service) => <label key={service} className="cursor-pointer rounded-full border border-white/10 px-3 py-2 text-sm text-zinc-300 transition has-[:checked]:border-cyan-200/50 has-[:checked]:bg-cyan-300/10 has-[:checked]:text-cyan-100"><input type="checkbox" name="services" value={service} className="sr-only" />{service}</label>)}</div><input name="otherService" className="mt-3 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Другое — напишите, что требуется" /></fieldset>
+        </div> : <div className="grid gap-5"><label><span className="text-sm text-zinc-300">Расскажите, что вам хотелось бы сделать или какую задачу решить</span><textarea name="challenge" required rows={5} className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Например, хочу улучшить работу с клиентами, но пока не понимаю, какой продукт нужен" /></label><label><span className="text-sm text-zinc-300">Чем занимается организация — если она уже есть</span><input name="organization" className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Сфера, аудитория или краткий контекст" /></label></div>}
+
+        <fieldset className="mt-7 border-t border-white/10 pt-6"><legend className="text-sm text-zinc-300">Как с вами связаться? <span className="text-zinc-500">Заполните хотя бы одно поле</span></legend><div className="mt-3 grid gap-3 md:grid-cols-3"><input name="phone" type="tel" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Телефон" /><input name="email" type="email" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Почта" /><input name="telegram" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Telegram" /></div></fieldset>
+        <div className="mt-7 flex flex-wrap items-center gap-4"><Button type="submit">Отправить заявку</Button>{submitted && <p className="text-sm text-cyan-100">Спасибо! Заявка заполнена — мы свяжемся с вами по указанному контакту.</p>}</div>
+      </form>
+      </div>
+    </div>
+  )
+}
+
+export function Footer({ onOpenRequest }: { onOpenRequest: () => void }) {
+  return (
+    <footer id="contacts" className="border-t border-white/10 px-5 py-14 sm:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-center gap-3 text-3xl font-semibold tracking-[-.05em] text-white sm:text-4xl">
+              <span>Связаться с нами</span>
+              <ChevronDown className="h-6 w-6 text-cyan-200 transition-transform duration-300 group-open:rotate-180" />
+            </summary>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400 sm:text-base">Все вопросы ведёт наш менеджер. Напишите ему напрямую или оставьте заявку на сайте — мы свяжемся с вами и обсудим ваш проект.</p>
+          </details>
+          <a className="mt-5 inline-block text-zinc-400 transition hover:text-white" href="mailto:mail@suyakov.ru">mail@suyakov.ru</a>
+        </div>
+        <div className="flex flex-col items-start gap-3 md:items-end">
+          <button type="button" onClick={onOpenRequest} className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-200 to-violet-300 px-5 py-3 text-sm font-semibold text-zinc-950 shadow-[0_0_28px_rgba(139,92,246,.28)] transition hover:-translate-y-0.5 hover:shadow-[0_0_38px_rgba(0,212,255,.38)]"><span>Оставить заявку</span><ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>
+          <a href="https://t.me/suyakov_egor" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-full border border-cyan-200/35 bg-cyan-300/[.08] px-5 py-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-200/70 hover:bg-cyan-300/[.16]"><Send className="h-5 w-5" />Написать в Telegram<span className="text-cyan-200/65">@suyakov_egor</span></a>
+        </div>
+      </div>
+      <div className="mx-auto mt-12 max-w-6xl border-t border-white/10 pt-5 text-xs text-zinc-600">© {new Date().getFullYear()} HATOMS. Создаём цифровые продукты, которые решают задачи.</div>
+    </footer>
+  )
 }

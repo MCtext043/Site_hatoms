@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { navigation } from '@/constants/content'
 import teamLogo from '@/assets/hatoms-wordmark.png'
 
-export function Navbar() {
+export function Navbar({ onOpenRequest }: { onOpenRequest: () => void }) {
   const [open, setOpen] = useState(false)
   const go = (href: string) => {
     setOpen(false)
@@ -21,7 +21,7 @@ export function Navbar() {
         <div className="hidden items-center gap-6 lg:flex">
           {navigation.slice(0, -1).map((item) => <button key={item.href} onClick={() => go(item.href)} className="text-sm text-zinc-400 transition hover:text-white">{item.label}</button>)}
         </div>
-        <button onClick={() => go('#contacts')} className="hidden text-sm text-cyan-200 lg:block">Начать проект →</button>
+        <button onClick={onOpenRequest} className="hidden text-sm text-cyan-200 lg:block">Оставить заявку →</button>
         <button className="text-zinc-200 lg:hidden" onClick={() => setOpen(!open)} aria-label="Открыть навигацию">{open ? <X /> : <Menu />}</button>
       </nav>
       <AnimatePresence>
