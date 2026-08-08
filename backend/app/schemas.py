@@ -85,7 +85,13 @@ class ApplicationRead(BaseModel):
     phone: str | None
     email: str | None
     telegram: str | None
+    is_archived: bool
+    archived_at: datetime | None
     created_at: datetime
+
+
+class ApplicationArchiveUpdate(BaseModel):
+    is_archived: bool
 
 
 class ApplicationListResponse(BaseModel):
