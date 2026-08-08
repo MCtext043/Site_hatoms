@@ -5,3 +5,13 @@ dist
 !.env.example
 *.tsbuildinfo
 .DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+backend/*.db
+backend/**/*.db
+.venv/
+*.log
+.idea/
+.vscode/

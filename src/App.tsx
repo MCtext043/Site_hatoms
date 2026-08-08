@@ -4,6 +4,7 @@ import Lenis from 'lenis'
 import { AmbientBackground } from '@/components/layout/ambient-background'
 import { Navbar } from '@/components/layout/navbar-logo'
 import { Footer, ProjectRequestModal } from '@/components/sections/landing-sections'
+import AdminPage from '@/pages/admin-page'
 import CertificatePage from '@/pages/certificate-page'
 import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
@@ -40,6 +41,29 @@ export default function App() {
   const eventSlug = pathname.match(/^\/events\/([^/]+)$/)?.[1]
   const event = events.find((item) => item.slug === eventSlug)
   const photos = event && (eventPhotos[event.slug as keyof typeof eventPhotos] ?? ('photos' in event ? event.photos : undefined))
+  const isAdmin = pathname === '/admin'
 
-  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} photos={photos} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div>
+  return (
+    <div className="overflow-x-clip">
+      <AmbientBackground />
+      {isAdmin ? (
+        <AdminPage />
+      ) : certificate ? (
+        <CertificatePage {...certificate} />
+      ) : certificateCollection ? (
+        <CertificateCollectionPage {...certificateCollection} />
+      ) : event ? (
+        <EventPage {...event} photos={photos} />
+      ) : (
+        <>
+          <Navbar onOpenRequest={() => setRequestOpen(true)} />
+          <Suspense fallback={<main className="min-h-screen" />}>
+            <HomePage />
+          </Suspense>
+          <Footer onOpenRequest={() => setRequestOpen(true)} />
+          <ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} />
+        </>
+      )}
+    </div>
+  )
 }
