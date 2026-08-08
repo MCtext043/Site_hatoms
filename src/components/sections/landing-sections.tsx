@@ -51,16 +51,16 @@ function ProjectCard({ index, position, cardOffset, cardWidth, isHovered, dimmed
   const coveredWidth = Math.max(0, cardWidth - cardOffset)
   const defaultPreviewMask = direction < 0 ? `inset(0 ${coveredWidth}px 0 0)` : `inset(0 0 0 ${coveredWidth}px)`
   const motionState = isActive
-    ? { x: 0, scale: dimmed ? 0.97 : 1, opacity: 1, filter: dimmed ? 'brightness(.78)' : 'blur(0px) brightness(1)', rotateY: 0, zIndex: 30, clipPath: 'inset(0 0 0 0)' }
+    ? { x: 0, scale: dimmed ? 0.97 : 1, opacity: 1, filter: dimmed ? 'blur(2px) brightness(.72)' : 'blur(0px) brightness(1)', rotateY: 0, zIndex: 30, clipPath: 'inset(0 0 0 0)' }
     : isPreview
-      ? { x: direction * cardOffset * (isHovered ? 0.78 : 1), scale: isHovered ? 0.94 : 0.84, opacity: isHovered ? 0.96 : 0.5, filter: isHovered ? 'blur(0px) brightness(1)' : 'blur(4px) brightness(.72)', rotateY: direction * (isHovered ? 1.5 : 4), zIndex: isHovered ? 50 : 10, clipPath: isHovered ? 'inset(0 0 0 0)' : defaultPreviewMask }
+      ? { x: direction * cardOffset * (isHovered ? 0.6 : 1), scale: isHovered ? 0.96 : 0.84, opacity: isHovered ? 1 : 0.5, filter: isHovered ? 'blur(0px) brightness(1.08)' : 'blur(4px) brightness(.72)', rotateY: direction * (isHovered ? 1 : 4), zIndex: isHovered ? 50 : 10, clipPath: isHovered ? 'inset(0 0 0 0)' : defaultPreviewMask, borderColor: isHovered ? 'rgba(165, 243, 252, .7)' : 'rgba(255, 255, 255, .10)', boxShadow: isHovered ? '0 22px 70px rgba(34, 211, 238, .24)' : '0 0 0 rgba(0, 0, 0, 0)' }
       : { x: direction * cardOffset * 1.72, scale: 0.72, opacity: 0, filter: 'blur(8px) brightness(.55)', rotateY: direction * 7, zIndex: 0, clipPath: 'inset(0 50% 0 50%)' }
 
   return (
     <motion.article
       initial={false}
       animate={motionState}
-      transition={carouselSpring}
+      transition={isPreview && isHovered ? { ...carouselSpring, clipPath: { duration: 0.16, ease: 'easeOut' } } : carouselSpring}
       drag={isActive ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.16}
@@ -122,6 +122,12 @@ export function Projects() {
   const cardWidth = Math.min(viewportWidth * (viewportWidth < 768 ? 0.9 : 0.88), 768)
   const dragProgress = Math.min(Math.abs(dragOffset) / 180, 1)
   const draggedTowards = dragOffset === 0 ? null : dragOffset < 0 ? nextProject : previousProject
+  const updateHoveredProject = (clientX: number, stage: HTMLDivElement) => {
+    if (viewportWidth < 768) return
+    const bounds = stage.getBoundingClientRect()
+    const offsetFromCenter = clientX - bounds.left - bounds.width / 2
+    setHoveredProject(offsetFromCenter < -cardWidth / 2 ? previousProject : offsetFromCenter > cardWidth / 2 ? nextProject : null)
+  }
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -139,12 +145,12 @@ export function Projects() {
   }, [])
 
   return (
-    <section id="projects" className="mx-auto max-w-[90rem] overflow-hidden px-5 py-28 sm:px-8 sm:py-32">
+    <section id="projects" className="relative overflow-visible px-5 py-28 sm:px-8 sm:py-32">
       <motion.div {...reveal} className="mx-auto max-w-6xl"><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div>
-      <motion.div {...reveal} className="project-stage mx-auto mt-12 max-w-[78rem] sm:mt-14">
+      <motion.div {...reveal} className="project-stage mx-auto mt-12 w-full sm:mt-14">
         <div className="project-stage__halo" aria-hidden="true" />
         <div className="project-stage__viewport">
-          <div className="project-stage__scene">
+          <div className="project-stage__scene" onMouseMove={(event) => updateHoveredProject(event.clientX, event.currentTarget)} onMouseLeave={() => setHoveredProject(null)}>
             {projects.map((project, index) => {
               const position = relativePosition(index)
               const isDraggedPreview = draggedTowards === index && Math.abs(position) === 1

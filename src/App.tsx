@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
+import { MotionConfig } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 import { AmbientBackground } from '@/components/layout/ambient-background'
@@ -10,13 +11,14 @@ import EventPage from '@/pages/event-page'
 import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
+const defaultMotionTransition = { duration: 0.46, ease: [0.22, 1, 0.36, 1] as const }
 
 export default function App() {
   const { pathname, state } = useLocation()
   const [requestOpen, setRequestOpen] = useState(false)
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const lenis = new Lenis({ duration: 1.05, smoothWheel: true })
+    const lenis = new Lenis({ duration: 1.16, smoothWheel: true, lerp: 0.09 })
     let frame = 0
     const raf = (time: number) => { lenis.raf(time); frame = requestAnimationFrame(raf) }
     frame = requestAnimationFrame(raf)
@@ -41,5 +43,5 @@ export default function App() {
   const event = events.find((item) => item.slug === eventSlug)
   const photos = event && (eventPhotos[event.slug as keyof typeof eventPhotos] ?? ('photos' in event ? event.photos : undefined))
 
-  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} photos={photos} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div>
+  return <MotionConfig reducedMotion="user" transition={defaultMotionTransition}><div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} photos={photos} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div></MotionConfig>
 }
