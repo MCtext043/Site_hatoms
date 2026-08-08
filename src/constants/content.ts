@@ -15,7 +15,15 @@ export const eventPhotos = {
 } as const
 
 export const projects = [
-  { number: '01', title: 'Placeholder One', description: 'Placeholder description for a digital product with a distinct visual system.', tags: ['React', 'TypeScript', 'AI'], tone: 'from-cyan-400/35 via-blue-500/10 to-transparent' },
+  {
+    number: '01',
+    title: 'Сердце Удмуртии',
+    description: 'Мобильный цифровой навигатор: помогает туристу открыть интересные места, построить маршрут и услышать истории города.',
+    tags: ['Android + iOS', 'Kotlin + Swift', 'FastAPI'],
+    tone: 'from-[#ff3154]/40 via-violet-500/20 to-slate-950',
+    screenshots: ['/projects/heart-udm/screen-board-01.png', '/projects/heart-udm/screen-board-02.png'],
+    url: 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0',
+  },
   { number: '02', title: 'Placeholder Two', description: 'Placeholder description for a platform built to feel precise, fast and effortless.', tags: ['Next.js', 'Python', 'Cloud'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent' },
   { number: '03', title: 'Placeholder Three', description: 'Placeholder description for an interface where every interaction has a purpose.', tags: ['Mobile', 'Node.js', 'Data'], tone: 'from-emerald-400/30 via-cyan-500/10 to-transparent' },
 ] as const

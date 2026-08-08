@@ -51,6 +51,9 @@ h1, h2, h3 { font-family: var(--font-display); }
 .project-card--active { isolation: isolate; background: #0a0e17; }
 .project-card__active-backing { position: absolute; z-index: 0; inset: 0; border-radius: inherit; background: linear-gradient(135deg, #08232b 0%, #0b1522 47%, #0a0e17 100%); }
 .project-card--preview { user-select: none; }
+.project-screencast-track { position: absolute; inset: 0; display: flex; width: 400%; height: 100%; animation: project-screencast 18s var(--motion-ease) infinite alternate; }
+.project-screencast-frame { width: 25%; height: 100%; flex: 0 0 25%; object-fit: cover; object-position: center; }
+@keyframes project-screencast { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (hover: hover) and (pointer: fine) { .project-card--preview { cursor: url('./assets/cursor-terminal-link.svg') 10 10, pointer; } }
 .project-nav-button { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgba(255, 255, 255, .13); border-radius: 999px; background: rgba(255, 255, 255, .045); color: #e4e4e7; transition: .25s ease; }
 .project-nav-button:hover { transform: translateY(-2px); border-color: rgba(165, 243, 252, .55); background: rgba(103, 232, 249, .12); color: white; box-shadow: 0 0 24px rgba(34, 211, 238, .15); }
