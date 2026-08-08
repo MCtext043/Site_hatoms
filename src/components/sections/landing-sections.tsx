@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, ExternalLink, GraduationCap, Send, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, GraduationCap, Send, Sparkles, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
@@ -38,20 +38,127 @@ export function Hero() {
   )
 }
 
+type ProjectCardProps = { index: number; position: number; cardOffset: number; cardWidth: number; isHovered: boolean; dimmed: boolean; onHover: (index: number | null) => void; onSelect: (index: number) => void; onDragProgress: (offset: number) => void; onDragEnd: (offset: number, velocity: number) => void }
+
+const carouselSpring = { type: 'spring' as const, stiffness: 300, damping: 29, mass: 0.82 }
+
+function ProjectCard({ index, position, cardOffset, cardWidth, isHovered, dimmed, onHover, onSelect, onDragProgress, onDragEnd }: ProjectCardProps) {
+  const project = projects[index]
+  const isActive = position === 0
+  const isPreview = Math.abs(position) === 1
+  const direction = position < 0 ? -1 : 1
+  const isFar = Math.abs(position) >= 2
+  const coveredWidth = Math.max(0, cardWidth - cardOffset)
+  const defaultPreviewMask = direction < 0 ? `inset(0 ${coveredWidth}px 0 0)` : `inset(0 0 0 ${coveredWidth}px)`
+  const motionState = isActive
+    ? { x: 0, scale: dimmed ? 0.97 : 1, opacity: 1, filter: dimmed ? 'brightness(.78)' : 'blur(0px) brightness(1)', rotateY: 0, zIndex: 30, clipPath: 'inset(0 0 0 0)' }
+    : isPreview
+      ? { x: direction * cardOffset * (isHovered ? 0.78 : 1), scale: isHovered ? 0.94 : 0.84, opacity: isHovered ? 0.96 : 0.5, filter: isHovered ? 'blur(0px) brightness(1)' : 'blur(4px) brightness(.72)', rotateY: direction * (isHovered ? 1.5 : 4), zIndex: isHovered ? 50 : 10, clipPath: isHovered ? 'inset(0 0 0 0)' : defaultPreviewMask }
+      : { x: direction * cardOffset * 1.72, scale: 0.72, opacity: 0, filter: 'blur(8px) brightness(.55)', rotateY: direction * 7, zIndex: 0, clipPath: 'inset(0 50% 0 50%)' }
+
+  return (
+    <motion.article
+      initial={false}
+      animate={motionState}
+      transition={carouselSpring}
+      drag={isActive ? 'x' : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.16}
+      dragMomentum={false}
+      onDrag={(_, info) => onDragProgress(info.offset.x)}
+      onDragEnd={(_, info) => onDragEnd(info.offset.x, info.velocity.x)}
+      onMouseEnter={() => isPreview && onHover(index)}
+      onMouseLeave={() => isPreview && onHover(null)}
+      onFocus={() => isPreview && onHover(index)}
+      onBlur={() => isPreview && onHover(null)}
+      onClick={() => isPreview && onSelect(index)}
+      onKeyDown={(event) => { if (isPreview && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); onSelect(index) } }}
+      tabIndex={isPreview ? 0 : -1}
+      aria-hidden={isFar}
+      className={`project-card group absolute left-1/2 top-0 w-[min(88vw,48rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border p-3 text-left ${isActive ? 'project-card--active cursor-grab border-cyan-200/30 shadow-[0_26px_80px_rgba(0,212,255,.16)] active:cursor-grabbing' : 'project-card--preview border-white/[.10] bg-[#0b0e18]/85'} ${isPreview ? 'cursor-pointer' : 'pointer-events-none'}`}
+      style={isActive ? { touchAction: 'pan-y' } : undefined}
+    >
+      {isActive && <div className="project-card__active-backing" aria-hidden="true" />}
+      <div className="project-card__content relative z-20">
+        <div className={`relative aspect-[2.05] overflow-hidden rounded-[1.2rem] bg-[#111827] bg-gradient-to-br ${project.tone}`}>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_20%,rgba(255,255,255,.25),transparent_24%),linear-gradient(135deg,transparent_35%,rgba(5,8,16,.6))]" />
+          <span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/20 font-mono text-[11px] tracking-widest text-white/80 backdrop-blur">{project.number}</span>
+          <span className="absolute bottom-4 left-5 text-[10px] uppercase tracking-[.24em] text-white/70">Selected work</span>
+          <div className="absolute inset-x-5 bottom-3 h-px bg-gradient-to-r from-cyan-100 via-white/80 to-transparent" />
+        </div>
+        <div className="relative px-3 pb-3 pt-5">
+          <p className="text-[10px] uppercase tracking-[.22em] text-cyan-100/65">Проект {project.number} · Digital product</p>
+          <h3 className="mt-2 text-2xl font-medium tracking-[-.035em] text-white sm:text-[1.7rem]">{project.title}</h3>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{project.description}</p>
+          <div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-white/[.08] bg-white/[.055] px-3 py-1.5 text-[10px] font-medium tracking-wide text-zinc-200">{tag}</span>)}</div>
+          {isActive && <button type="button" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Открыть кейс <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>}
+        </div>
+      </div>
+    </motion.article>
+  )
+}
+
 export function Projects() {
   const [activeProject, setActiveProject] = useState(0)
+  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [viewportWidth, setViewportWidth] = useState(() => typeof window === 'undefined' ? 1280 : window.innerWidth)
   const previousProject = (activeProject - 1 + projects.length) % projects.length
   const nextProject = (activeProject + 1) % projects.length
-  const projectCard = (index: number, variant: 'active' | 'side') => {
-    const project = projects[index]
-    const isActive = variant === 'active'
-    return <motion.article key={`${variant}-${project.number}`} initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .42, ease: 'easeOut' }} className={`group h-full overflow-hidden rounded-[1.75rem] border p-3 text-left transition-all duration-500 ${isActive ? 'border-cyan-200/30 bg-white/[.06] shadow-[0_24px_70px_rgba(0,212,255,.13)]' : 'cursor-pointer border-white/[.08] bg-white/[.025] opacity-45 blur-[2px] hover:-translate-y-3 hover:border-violet-200/45 hover:opacity-90 hover:blur-0'}`}>
-      <div className={`relative aspect-[1.85] overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${project.tone}`}><span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-black/25 font-mono text-xs text-white/75 backdrop-blur">{project.number}</span><div className={`absolute inset-x-6 bottom-6 h-px origin-left bg-white/70 transition duration-500 ${isActive ? 'scale-x-150' : 'group-hover:scale-x-150'}`} /></div>
-      <div className="px-3 pb-3 pt-6"><p className="text-[11px] uppercase tracking-[.2em] text-cyan-100/65">Проект {project.number}</p><h3 className="mt-2 text-2xl font-medium text-white">{project.title}</h3><p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{project.description}</p><div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full bg-white/[.06] px-3 py-1.5 text-[11px] text-zinc-300">{tag}</span>)}</div>{isActive && <button className="mt-7 flex items-center gap-2 text-sm font-medium text-[#c8fff4]">Открыть кейс <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></button>}</div>
-    </motion.article>
+  const changeProject = (direction: -1 | 1) => {
+    setHoveredProject(null)
+    setDragOffset(0)
+    setActiveProject((current) => (current + direction + projects.length) % projects.length)
   }
+  const showProject = (index: number) => {
+    const forward = (index - activeProject + projects.length) % projects.length
+    changeProject(forward === 0 ? 1 : forward <= projects.length / 2 ? 1 : -1)
+  }
+  const relativePosition = (index: number) => {
+    const forward = (index - activeProject + projects.length) % projects.length
+    return forward > projects.length / 2 ? forward - projects.length : forward
+  }
+  const cardOffset = Math.min(viewportWidth < 768 ? viewportWidth * 0.62 : viewportWidth * 0.36, 470)
+  const cardWidth = Math.min(viewportWidth * (viewportWidth < 768 ? 0.9 : 0.88), 768)
+  const dragProgress = Math.min(Math.abs(dragOffset) / 180, 1)
+  const draggedTowards = dragOffset === 0 ? null : dragOffset < 0 ? nextProject : previousProject
 
-  return <section id="projects" className="mx-auto max-w-[90rem] overflow-hidden px-5 py-32 sm:px-8"><motion.div {...reveal} className="mx-auto max-w-6xl"><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div><motion.div {...reveal} className="mt-14 md:hidden">{projectCard(activeProject, 'active')}<div className="mt-5 flex justify-center gap-2">{projects.map((project, index) => <button key={project.number} type="button" onClick={() => setActiveProject(index)} aria-label={`Показать проект ${index + 1}`} aria-pressed={activeProject === index} className={`h-2 rounded-full transition-all ${activeProject === index ? 'w-7 bg-cyan-200' : 'w-2 bg-white/30'}`} />)}</div></motion.div><motion.div {...reveal} className="mt-14 hidden min-h-[430px] grid-cols-[minmax(130px,1fr)_minmax(0,3.15fr)_minmax(130px,1fr)] items-center gap-5 md:grid"><button type="button" onMouseEnter={() => setActiveProject(previousProject)} onFocus={() => setActiveProject(previousProject)} onClick={() => setActiveProject(previousProject)} aria-label={`Показать проект ${previousProject + 1}`} className="h-[75%] text-left">{projectCard(previousProject, 'side')}</button><div className="relative z-10">{projectCard(activeProject, 'active')}</div><button type="button" onMouseEnter={() => setActiveProject(nextProject)} onFocus={() => setActiveProject(nextProject)} onClick={() => setActiveProject(nextProject)} aria-label={`Показать проект ${nextProject + 1}`} className="h-[75%] text-left">{projectCard(nextProject, 'side')}</button></motion.div><div className="mt-7 hidden justify-center gap-2 md:flex">{projects.map((project, index) => <button key={project.number} type="button" onClick={() => setActiveProject(index)} aria-label={`Показать проект ${index + 1}`} aria-pressed={activeProject === index} className={`h-1.5 rounded-full transition-all ${activeProject === index ? 'w-8 bg-cyan-200' : 'w-1.5 bg-white/30 hover:bg-white/70'}`} />)}</div></section>
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') changeProject(-1)
+      if (event.key === 'ArrowRight') changeProject(1)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  return (
+    <section id="projects" className="mx-auto max-w-[90rem] overflow-hidden px-5 py-28 sm:px-8 sm:py-32">
+      <motion.div {...reveal} className="mx-auto max-w-6xl"><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div>
+      <motion.div {...reveal} className="project-stage mx-auto mt-12 max-w-[78rem] sm:mt-14">
+        <div className="project-stage__halo" aria-hidden="true" />
+        <div className="project-stage__viewport">
+          <div className="project-stage__scene">
+            {projects.map((project, index) => {
+              const position = relativePosition(index)
+              const isDraggedPreview = draggedTowards === index && Math.abs(position) === 1
+              return <ProjectCard key={project.number} index={index} position={position} cardOffset={cardOffset} cardWidth={cardWidth} isHovered={hoveredProject === index || isDraggedPreview} dimmed={hoveredProject !== null || (position === 0 && dragProgress > 0.04)} onHover={setHoveredProject} onSelect={showProject} onDragProgress={setDragOffset} onDragEnd={(offset, velocity) => { const direction = offset < 0 || velocity < -650 ? 1 : offset > 0 || velocity > 650 ? -1 : 0; if (Math.abs(offset) > 100 || Math.abs(velocity) > 650) changeProject(direction as -1 | 1); else setDragOffset(0) }} />
+            })}
+          </div>
+        </div>
+        <div className="mt-6 flex items-center justify-between gap-4 sm:mt-8">
+          <div className="flex items-center gap-2" role="tablist" aria-label="Выбор проекта">{projects.map((project, index) => <button key={project.number} type="button" role="tab" onClick={() => showProject(index)} aria-label={`Показать проект ${index + 1}`} aria-selected={activeProject === index} className={`h-1.5 rounded-full transition-all duration-300 ${activeProject === index ? 'w-9 bg-cyan-200 shadow-[0_0_12px_rgba(165,243,252,.65)]' : 'w-1.5 bg-white/30 hover:bg-white/70'}`} />)}</div>
+          <div className="flex items-center gap-2"><span className="mr-2 hidden font-mono text-[11px] tracking-[.16em] text-zinc-500 sm:inline">{String(activeProject + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span><button type="button" onClick={() => changeProject(-1)} className="project-nav-button" aria-label="Предыдущий проект"><ArrowLeft className="h-4 w-4" /></button><button type="button" onClick={() => changeProject(1)} className="project-nav-button" aria-label="Следующий проект"><ArrowRight className="h-4 w-4" /></button></div>
+        </div>
+      </motion.div>
+    </section>
+  )
 }
 
 /* function ProviderIcon({ provider }: { provider: 'yandex' | 'samsung' | 't' }) {
