@@ -18,11 +18,32 @@ type EventPageProps = {
 
 export default function EventPage({ title, date, subtitle, description, gallery, photos, presentation, demo, repositoryUrl, repositories }: EventPageProps) {
   const navigate = useNavigate()
+  if (title === 'НТО') {
+    subtitle = undefined
+    description = `В Национальной технологической олимпиаде наша команда работала сразу в двух профилях — «Автономные транспортные системы» и «Разработка мобильных приложений».
+
+Автономные транспортные системы
+
+Мы разрабатывали нейросети и алгоритмы компьютерного зрения для задач беспилотного транспорта. Работали с распознаванием объектов, оценкой расстояния и траекторий, построением маршрутов и координацией устройств. Наши решения должны были помогать автономным автомобилям, роверам, квадрокоптерам и роботам уверенно ориентироваться в пространстве и реагировать на изменения среды: препятствия, дорожные работы, аварийные ситуации и сбои городской инфраструктуры.
+
+Разработка мобильных приложений
+
+В этом профиле мы создавали Android-приложение в команде, проходя весь путь от идеи до готового продукта с серверной частью. Мы прорабатывали пользовательский сценарий, интерфейс, мобильную разработку и взаимодействие с бэкендом. Для нас это был практический опыт создания полноценного приложения — с распределением ролей, общими решениями и результатом, который можно добавить в портфолио.`
+  }
+  const momentPhotos = photos
+  const galleryVideo = demo?.includes('/events/big-challenges/') ? demo : undefined
+  const leadPhoto = momentPhotos?.find((photo) => photo.includes('sirius-hotel'))
+  const remainingMomentPhotos = momentPhotos?.filter((photo) => photo !== leadPhoto)
+  if (galleryVideo) {
+    photos = undefined
+    demo = undefined
+  }
   const [activeImage, setActiveImage] = useState<number | null>(null)
   const [previewImage, setPreviewImage] = useState(0)
   const [activePhoto, setActivePhoto] = useState<number | null>(null)
   const [presentationSlide, setPresentationSlide] = useState(0)
   const [activePresentation, setActivePresentation] = useState<number | null>(null)
+  const [activeBigGalleryItem, setActiveBigGalleryItem] = useState<number | null>(null)
   const [zoom, setZoom] = useState(1)
   const hasGallery = Boolean(gallery?.length)
   const openGallery = (index: number) => { setActiveImage(index); setZoom(1) }
@@ -40,19 +61,23 @@ export default function EventPage({ title, date, subtitle, description, gallery,
   const closePresentation = () => setActivePresentation(null)
   const showPreviousPresentation = () => setActivePresentation((current) => current === null || !presentation?.length ? null : (current - 1 + presentation.length) % presentation.length)
   const showNextPresentation = () => setActivePresentation((current) => current === null || !presentation?.length ? null : (current + 1) % presentation.length)
+  const bigGalleryItems = galleryVideo && momentPhotos ? [...momentPhotos, galleryVideo] : []
+  const closeBigGallery = () => setActiveBigGalleryItem(null)
+  const showPreviousBigGalleryItem = () => setActiveBigGalleryItem((current) => current === null ? null : (current - 1 + bigGalleryItems.length) % bigGalleryItems.length)
+  const showNextBigGalleryItem = () => setActiveBigGalleryItem((current) => current === null ? null : (current + 1) % bigGalleryItems.length)
 
   useEffect(() => {
-    if (activeImage === null && activePhoto === null && activePresentation === null) return
+    if (activeImage === null && activePhoto === null && activePresentation === null && activeBigGalleryItem === null) return
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { closeGallery(); closePhoto(); closePresentation() }
-      if (event.key === 'ArrowLeft') activePresentation !== null ? showPreviousPresentation() : activePhoto !== null ? showPreviousPhoto() : showPrevious()
-      if (event.key === 'ArrowRight') activePresentation !== null ? showNextPresentation() : activePhoto !== null ? showNextPhoto() : showNext()
+      if (event.key === 'Escape') { closeGallery(); closePhoto(); closePresentation(); closeBigGallery() }
+      if (event.key === 'ArrowLeft') activeBigGalleryItem !== null ? showPreviousBigGalleryItem() : activePresentation !== null ? showPreviousPresentation() : activePhoto !== null ? showPreviousPhoto() : showPrevious()
+      if (event.key === 'ArrowRight') activeBigGalleryItem !== null ? showNextBigGalleryItem() : activePresentation !== null ? showNextPresentation() : activePhoto !== null ? showNextPhoto() : showNext()
       if (event.key === '+' || event.key === '=') { event.preventDefault(); changeZoom(.25) }
       if (event.key === '-') { event.preventDefault(); changeZoom(-.25) }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [activeImage, activePhoto, activePresentation, gallery, photos, presentation])
+  }, [activeImage, activePhoto, activePresentation, activeBigGalleryItem, gallery, photos, presentation, bigGalleryItems.length])
 
   return <main className="mx-auto min-h-screen max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
     <button type="button" onClick={() => navigate('/', { state: { scrollTo: 'events' } })} className="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-cyan-100"><ArrowLeft className="h-4 w-4" />Вернуться к мероприятиям</button>
@@ -81,7 +106,24 @@ export default function EventPage({ title, date, subtitle, description, gallery,
 
       {repositoryUrl && <a href={repositoryUrl} target="_blank" rel="noreferrer" className="mt-12 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.04] px-5 py-3 text-sm text-zinc-200 transition hover:border-cyan-200/40 hover:bg-cyan-300/[.08] hover:text-white"><GitBranch className="h-4 w-4" />GitHub — исходный код проекта</a>}
       {repositories?.length ? <div className="mt-12 flex flex-wrap gap-3">{repositories.map(({ label, url }) => <a key={url} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.04] px-5 py-3 text-sm text-zinc-200 transition hover:border-cyan-200/40 hover:bg-cyan-300/[.08] hover:text-white"><GitBranch className="h-4 w-4" />GitHub — {label}</a>)}</div> : null}
+      {galleryVideo && leadPhoto && <section className="mt-20" aria-labelledby="big-challenges-gallery-heading">
+        <div className="flex items-center gap-3"><Images className="h-5 w-5 text-violet-200" /><h2 id="big-challenges-gallery-heading" className="text-2xl font-medium text-white">Фотогалерея</h2></div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          <button type="button" onClick={() => setActiveBigGalleryItem(bigGalleryItems.indexOf(leadPhoto))} className="group aspect-[3/2] overflow-hidden rounded-2xl border border-white/10 bg-white/[.03] text-left focus:outline-none focus:ring-2 focus:ring-violet-300"><img src={leadPhoto} alt="Большие вызовы, фото 4" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /></button>
+          <button type="button" onClick={() => setActiveBigGalleryItem(bigGalleryItems.indexOf(galleryVideo))} className="group relative aspect-[3/2] overflow-hidden rounded-2xl border border-white/10 bg-black text-left focus:outline-none focus:ring-2 focus:ring-violet-300"><video muted preload="metadata" playsInline className="h-full w-full object-cover"><source src={galleryVideo} type="video/mp4" /></video><span className="absolute inset-0 grid place-items-center bg-black/20 text-sm font-medium text-white opacity-0 transition group-hover:opacity-100">Открыть видео</span></button>
+        </div>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {remainingMomentPhotos?.map((photo, index) => <button key={photo} type="button" onClick={() => setActiveBigGalleryItem(bigGalleryItems.indexOf(photo))} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[.03] text-left focus:outline-none focus:ring-2 focus:ring-violet-300"><img src={photo} alt={`Большие вызовы, фото ${index + 1}`} className="h-auto w-full transition duration-500 group-hover:scale-105" /></button>)}
+        </div>
+      </section>}
     </motion.article>
+    {activeBigGalleryItem !== null && <div role="dialog" aria-modal="true" aria-label="Просмотр фотогалереи" className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm" onClick={closeBigGallery}>
+      <button type="button" onClick={closeBigGallery} className="absolute right-5 top-5 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20" aria-label="Закрыть просмотр"><X className="h-5 w-5" /></button>
+      <button type="button" onClick={(event) => { event.stopPropagation(); showPreviousBigGalleryItem() }} className="absolute left-3 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 sm:left-8" aria-label="Предыдущий элемент"><ChevronLeft className="h-6 w-6" /></button>
+      {bigGalleryItems[activeBigGalleryItem] === galleryVideo ? <video controls autoPlay preload="metadata" playsInline className="max-h-[86svh] max-w-[84vw] rounded-2xl bg-black shadow-2xl" onClick={(event) => event.stopPropagation()}><source src={galleryVideo} type="video/mp4" />Ваш браузер не поддерживает воспроизведение видео.</video> : <img src={bigGalleryItems[activeBigGalleryItem]} alt={`Большие вызовы, фото ${activeBigGalleryItem + 1}`} className="max-h-[86svh] max-w-[84vw] rounded-2xl object-contain shadow-2xl" onClick={(event) => event.stopPropagation()} />}
+      <button type="button" onClick={(event) => { event.stopPropagation(); showNextBigGalleryItem() }} className="absolute right-3 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 sm:right-8" aria-label="Следующий элемент"><ChevronRight className="h-6 w-6" /></button>
+      <p className="absolute bottom-5 text-sm text-zinc-300">{activeBigGalleryItem + 1} / {bigGalleryItems.length}</p>
+    </div>}
     {activeImage !== null && gallery && <div role="dialog" aria-modal="true" aria-label="Просмотр экрана приложения" className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm" onClick={closeGallery}>
       <button type="button" onClick={closeGallery} className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20" aria-label="Закрыть просмотр"><X className="h-5 w-5" /></button>
       <button type="button" onClick={(event) => { event.stopPropagation(); showPrevious() }} className="absolute left-3 grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 sm:left-8" aria-label="Предыдущий экран"><ChevronLeft className="h-6 w-6" /></button>

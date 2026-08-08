@@ -22,6 +22,8 @@ h1, h2, h3 { font-family: var(--font-display); }
 .grid-bg { background-image: linear-gradient(rgba(148,163,184,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.045) 1px, transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(to bottom, black, transparent 78%); }
 @keyframes drift { from { transform: translate3d(-2%, -2%, 0) scale(.95); } to { transform: translate3d(7%, 5%, 0) scale(1.1); } }
 @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
+@keyframes technology-marquee { to { transform: translateX(-50%); } }
+.technology-marquee-track { animation: technology-marquee 30s linear infinite; }
 @media (min-width: 768px) {
   /* Four-photo event galleries use a wide, lower final image instead of a tall card. */
   section[aria-labelledby="moments-heading"]:has(> div > :nth-child(4):last-child) > div > :nth-child(4) {
