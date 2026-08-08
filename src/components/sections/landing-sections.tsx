@@ -123,13 +123,10 @@ export function TechStack() {
 
       <motion.div {...reveal} className="mt-12">
         <h3 className="mb-5 text-lg font-medium tracking-[-.02em] text-white sm:text-xl">Основные технологии</h3>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {primaryTechnologies.map(tech => (
-            <div key={tech} className="group relative flex min-h-20 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/20 bg-cyan-300/[.045] px-3 py-4 text-center text-sm text-zinc-200 transition hover:scale-[1.025] hover:border-cyan-200/50 hover:bg-cyan-300/[.1] hover:text-white">
-              <span className="transition-all duration-300 group-hover:translate-y-2 group-hover:opacity-0">{tech}</span>
-              <span className="pointer-events-none absolute inset-0 grid place-items-center translate-y-3 opacity-0 text-3xl text-cyan-100 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-hover:drop-shadow-[0_0_12px_rgba(0,212,255,.65)]"><TechnologyLogo name={tech} /></span>
-            </div>
-          ))}
+        <div className="technology-marquee group overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          <div className="technology-marquee-track flex w-max gap-3 group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+            {[...primaryTechnologies, ...primaryTechnologies].map((tech, index) => <article key={`${tech}-${index}`} aria-hidden={index >= primaryTechnologies.length} className="flex min-w-60 items-center gap-4 rounded-full border border-white/10 bg-gradient-to-r from-white/[.055] to-transparent px-5 py-4 transition hover:border-violet-300/40"><span className="h-2 w-2 shrink-0 rounded-full bg-violet-400 shadow-[0_0_13px_#8b5cf6]" /><span className="text-3xl text-cyan-100"><TechnologyLogo name={tech} /></span><span className="h-6 w-px bg-white/15" /><span className="min-w-0 text-sm text-zinc-200">{tech}</span></article>)}
+          </div>
         </div>
       </motion.div>
 
