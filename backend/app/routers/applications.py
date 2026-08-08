@@ -7,7 +7,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.dependencies import require_admin
 from app.models import Application
-from app.schemas import ApplicationCreate, ApplicationListResponse, ApplicationRead
+from app.schemas import (
+    ApplicationArchiveUpdate,
+    ApplicationCreate,
+    ApplicationListResponse,
+    ApplicationRead,
+)
 
 router = APIRouter(prefix="/applications", tags=["Applications"])
 
@@ -39,6 +44,7 @@ def create_application(payload: ApplicationCreate, db: Session = Depends(get_db)
         phone=payload.phone,
         email=str(payload.email) if payload.email else None,
         telegram=payload.telegram,
+        is_archived=False,
     )
     db.add(application)
     db.commit()
@@ -50,7 +56,10 @@ def create_application(payload: ApplicationCreate, db: Session = Depends(get_db)
     "",
     response_model=ApplicationListResponse,
     summary="Список заявок",
-    description="Админский список заявок с поиском и фильтром по датам. Требует Bearer-токен.",
+    description=(
+        "Админский список заявок с поиском, фильтром по датам и статусу архива. "
+        "Требует Bearer-токен."
+    ),
     dependencies=[Depends(require_admin)],
 )
 def list_applications(
@@ -58,6 +67,10 @@ def list_applications(
     date_from: date | None = Query(default=None, description="Начало периода (включительно), YYYY-MM-DD"),
     date_to: date | None = Query(default=None, description="Конец периода (включительно), YYYY-MM-DD"),
     request_type: str | None = Query(default=None, pattern="^(idea|help)$", description="Фильтр по типу заявки"),
+    archived: bool = Query(
+        default=False,
+        description="False — активные заявки, True — архив",
+    ),
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -68,7 +81,7 @@ def list_applications(
             detail="date_from не может быть позже date_to",
         )
 
-    filters = []
+    filters = [Application.is_archived.is_(archived)]
 
     if request_type:
         filters.append(Application.request_type == request_type)
@@ -93,9 +106,7 @@ def list_applications(
             )
         )
 
-    base = select(Application)
-    if filters:
-        base = base.where(*filters)
+    base = select(Application).where(*filters)
 
     total = db.scalar(select(func.count()).select_from(base.subquery())) or 0
     items = list(
@@ -116,4 +127,27 @@ def get_application(application_id: int, db: Session = Depends(get_db)) -> Appli
     application = db.get(Application, application_id)
     if application is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Заявка не найдена")
+    return application
+
+
+@router.patch(
+    "/{application_id}/archive",
+    response_model=ApplicationRead,
+    summary="Архивировать / разархивировать заявку",
+    description="Перемещает заявку в архив или возвращает в активные. Требует Bearer-токен.",
+    dependencies=[Depends(require_admin)],
+)
+def set_application_archive(
+    application_id: int,
+    payload: ApplicationArchiveUpdate,
+    db: Session = Depends(get_db),
+) -> Application:
+    application = db.get(Application, application_id)
+    if application is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Заявка не найдена")
+
+    application.is_archived = payload.is_archived
+    application.archived_at = datetime.now(timezone.utc) if payload.is_archived else None
+    db.commit()
+    db.refresh(application)
     return application

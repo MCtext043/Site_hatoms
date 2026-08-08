@@ -44,6 +44,8 @@ def test_create_idea_application(client: TestClient) -> None:
     assert data["project_name"] == "Сервис доставки"
     assert data["services"] == ["Сайт", "Telegram-бот"]
     assert data["email"] == "client@example.com"
+    assert data["is_archived"] is False
+    assert data["archived_at"] is None
     assert "created_at" in data
 
 
@@ -146,6 +148,51 @@ def test_get_application(client: TestClient, admin_headers: dict[str, str]) -> N
 
     missing = client.get("/api/applications/9999", headers=admin_headers)
     assert missing.status_code == 404
+
+
+def test_archive_and_restore(client: TestClient, admin_headers: dict[str, str]) -> None:
+    created = client.post("/api/applications", json=IDEA_PAYLOAD).json()
+    application_id = created["id"]
+
+    active = client.get("/api/applications", headers=admin_headers)
+    assert active.json()["total"] == 1
+    assert active.json()["items"][0]["is_archived"] is False
+
+    archived_empty = client.get("/api/applications", params={"archived": True}, headers=admin_headers)
+    assert archived_empty.json()["total"] == 0
+
+    archived = client.patch(
+        f"/api/applications/{application_id}/archive",
+        json={"is_archived": True},
+        headers=admin_headers,
+    )
+    assert archived.status_code == 200
+    assert archived.json()["is_archived"] is True
+    assert archived.json()["archived_at"] is not None
+
+    assert client.get("/api/applications", headers=admin_headers).json()["total"] == 0
+    archive_list = client.get("/api/applications", params={"archived": True}, headers=admin_headers)
+    assert archive_list.json()["total"] == 1
+    assert archive_list.json()["items"][0]["id"] == application_id
+
+    restored = client.patch(
+        f"/api/applications/{application_id}/archive",
+        json={"is_archived": False},
+        headers=admin_headers,
+    )
+    assert restored.status_code == 200
+    assert restored.json()["is_archived"] is False
+    assert restored.json()["archived_at"] is None
+    assert client.get("/api/applications", headers=admin_headers).json()["total"] == 1
+
+
+def test_archive_requires_auth(client: TestClient) -> None:
+    created = client.post("/api/applications", json=IDEA_PAYLOAD).json()
+    response = client.patch(
+        f"/api/applications/{created['id']}/archive",
+        json={"is_archived": True},
+    )
+    assert response.status_code == 401
 
 
 def test_openapi_docs_available(client: TestClient) -> None:

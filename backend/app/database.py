@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import get_settings
@@ -37,10 +37,44 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
+def _ensure_archive_columns() -> None:
+    """Add archive columns to existing DBs created before this feature."""
+    inspector = inspect(engine)
+    if "applications" not in inspector.get_table_names():
+        return
+
+    existing = {column["name"] for column in inspector.get_columns("applications")}
+    statements: list[str] = []
+
+    if "is_archived" not in existing:
+        if get_settings().is_sqlite:
+            statements.append(
+                "ALTER TABLE applications ADD COLUMN is_archived BOOLEAN NOT NULL DEFAULT 0"
+            )
+        else:
+            statements.append(
+                "ALTER TABLE applications ADD COLUMN is_archived BOOLEAN NOT NULL DEFAULT FALSE"
+            )
+
+    if "archived_at" not in existing:
+        if get_settings().is_sqlite:
+            statements.append("ALTER TABLE applications ADD COLUMN archived_at DATETIME")
+        else:
+            statements.append("ALTER TABLE applications ADD COLUMN archived_at TIMESTAMPTZ")
+
+    if not statements:
+        return
+
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.execute(text(statement))
+
+
 def init_db() -> None:
     from app import models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
+    _ensure_archive_columns()
 
 
 def check_db_connection() -> bool:
