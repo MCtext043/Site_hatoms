@@ -1,0 +1,47 @@
+# Локальная разработка: PostgreSQL (+ опционально API)
+# Использование:
+#   docker compose up -d db
+#   docker compose --profile full up -d
+
+name: hatoms
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: hatoms-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hatoms}
+      POSTGRES_USER: ${POSTGRES_USER:-hatoms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hatoms}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - hatoms_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hatoms} -d ${POSTGRES_DB:-hatoms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    profiles: ["full"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hatoms-api
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-hatoms}:${POSTGRES_PASSWORD:-hatoms}@db:5432/${POSTGRES_DB:-hatoms}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  hatoms_pg_data:

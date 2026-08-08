@@ -316,6 +316,8 @@ export function Events() {
 export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [requestType, setRequestType] = useState<'idea' | 'help'>('idea')
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
     if (!open) return
@@ -329,7 +331,7 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
     }
   }, [open])
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = event.currentTarget
     const contacts = ['phone', 'email', 'telegram'].map((name) => form.elements.namedItem(name) as HTMLInputElement | null)
@@ -337,7 +339,37 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
     contacts.forEach((field) => field?.setCustomValidity(hasContact ? '' : 'Укажите хотя бы один способ связи.'))
 
     if (!form.checkValidity()) return
-    setSubmitted(true)
+
+    const data = new FormData(form)
+    const services = data.getAll('services').filter((value): value is string => typeof value === 'string')
+    const emptyToNull = (value: FormDataEntryValue | null) => {
+      if (typeof value !== 'string') return null
+      const trimmed = value.trim()
+      return trimmed || null
+    }
+
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const { createApplication } = await import('@/lib/api')
+      await createApplication({
+        request_type: requestType,
+        project_name: emptyToNull(data.get('projectName')),
+        organization: emptyToNull(data.get('organization')),
+        idea: emptyToNull(data.get('idea')),
+        services,
+        other_service: emptyToNull(data.get('otherService')),
+        challenge: emptyToNull(data.get('challenge')),
+        phone: emptyToNull(data.get('phone')),
+        email: emptyToNull(data.get('email')),
+        telegram: emptyToNull(data.get('telegram')),
+      })
+      setSubmitted(true)
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Не удалось отправить заявку')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (!open) return null
@@ -353,11 +385,11 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
       </div>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2">
-        <button type="button" onClick={() => { setRequestType('idea'); setSubmitted(false) }} aria-pressed={requestType === 'idea'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'idea' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
+        <button type="button" onClick={() => { setRequestType('idea'); setSubmitted(false); setSubmitError('') }} aria-pressed={requestType === 'idea'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'idea' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
           <span className="text-base font-medium text-white">У меня есть идея</span>
           <span className="mt-2 block text-sm leading-5 text-zinc-400">Знаю, что хочу создать, и готов рассказать о проекте.</span>
         </button>
-        <button type="button" onClick={() => { setRequestType('help'); setSubmitted(false) }} aria-pressed={requestType === 'help'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'help' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
+        <button type="button" onClick={() => { setRequestType('help'); setSubmitted(false); setSubmitError('') }} aria-pressed={requestType === 'help'} className={`rounded-2xl border p-5 text-left transition ${requestType === 'help' ? 'border-cyan-200/50 bg-cyan-300/[.08]' : 'border-white/10 bg-white/[.025] hover:border-white/25'}`}>
           <span className="text-base font-medium text-white">Нужна помощь с идеей</span>
           <span className="mt-2 block text-sm leading-5 text-zinc-400">Есть задача или желание сделать что-то новое, но пока без точного решения.</span>
         </button>
@@ -372,7 +404,11 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
         </div> : <div className="grid gap-5"><label><span className="text-sm text-zinc-300">Расскажите, что вам хотелось бы сделать или какую задачу решить</span><textarea name="challenge" required rows={5} className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Например, хочу улучшить работу с клиентами, но пока не понимаю, какой продукт нужен" /></label><label><span className="text-sm text-zinc-300">Чем занимается организация — если она уже есть</span><input name="organization" className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Сфера, аудитория или краткий контекст" /></label></div>}
 
         <fieldset className="mt-7 border-t border-white/10 pt-6"><legend className="text-sm text-zinc-300">Как с вами связаться? <span className="text-zinc-500">Заполните хотя бы одно поле</span></legend><div className="mt-3 grid gap-3 md:grid-cols-3"><input name="phone" type="tel" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Телефон" /><input name="email" type="email" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Почта" /><input name="telegram" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Telegram" /></div></fieldset>
-        <div className="mt-7 flex flex-wrap items-center gap-4"><Button type="submit">Отправить заявку</Button>{submitted && <p className="text-sm text-cyan-100">Спасибо! Заявка заполнена — мы свяжемся с вами по указанному контакту.</p>}</div>
+        <div className="mt-7 flex flex-wrap items-center gap-4">
+          <Button type="submit" disabled={submitting || submitted}>{submitting ? 'Отправка…' : 'Отправить заявку'}</Button>
+          {submitted && <p className="text-sm text-cyan-100">Спасибо! Заявка заполнена — мы свяжемся с вами по указанному контакту.</p>}
+          {submitError && <p className="text-sm text-rose-300">{submitError}</p>}
+        </div>
       </form>
       </div>
     </div>
