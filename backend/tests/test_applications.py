@@ -84,19 +84,27 @@ def test_list_and_search(client: TestClient, admin_headers: dict[str, str]) -> N
     client.post("/api/applications", json=IDEA_PAYLOAD)
     client.post("/api/applications", json=HELP_PAYLOAD)
 
-    response = client.get("/api/applications", headers=admin_headers)
+    response = client.get("/api/applications", params={"scope": "active"}, headers=admin_headers)
     assert response.status_code == 200
     body = response.json()
     assert body["total"] == 2
     assert len(body["items"]) == 2
 
-    search = client.get("/api/applications", params={"q": "доставки"}, headers=admin_headers)
+    search = client.get(
+        "/api/applications",
+        params={"q": "доставки", "scope": "active"},
+        headers=admin_headers,
+    )
     assert search.status_code == 200
     search_body = search.json()
     assert search_body["total"] == 1
     assert search_body["items"][0]["project_name"] == "Сервис доставки"
 
-    by_type = client.get("/api/applications", params={"request_type": "help"}, headers=admin_headers)
+    by_type = client.get(
+        "/api/applications",
+        params={"request_type": "help", "scope": "active"},
+        headers=admin_headers,
+    )
     assert by_type.json()["total"] == 1
     assert by_type.json()["items"][0]["request_type"] == "help"
 
@@ -125,7 +133,7 @@ def test_filter_by_dates(client: TestClient, admin_headers: dict[str, str], db_s
 
     recent = client.get(
         "/api/applications",
-        params={"date_from": week_ago, "date_to": today},
+        params={"date_from": week_ago, "date_to": today, "scope": "active"},
         headers=admin_headers,
     )
     assert recent.status_code == 200
@@ -134,7 +142,7 @@ def test_filter_by_dates(client: TestClient, admin_headers: dict[str, str], db_s
 
     invalid = client.get(
         "/api/applications",
-        params={"date_from": today, "date_to": week_ago},
+        params={"date_from": today, "date_to": week_ago, "scope": "active"},
         headers=admin_headers,
     )
     assert invalid.status_code == 422
@@ -154,11 +162,11 @@ def test_archive_and_restore(client: TestClient, admin_headers: dict[str, str]) 
     created = client.post("/api/applications", json=IDEA_PAYLOAD).json()
     application_id = created["id"]
 
-    active = client.get("/api/applications", headers=admin_headers)
+    active = client.get("/api/applications", params={"scope": "active"}, headers=admin_headers)
     assert active.json()["total"] == 1
     assert active.json()["items"][0]["is_archived"] is False
 
-    archived_empty = client.get("/api/applications", params={"archived": True}, headers=admin_headers)
+    archived_empty = client.get("/api/applications", params={"scope": "archived"}, headers=admin_headers)
     assert archived_empty.json()["total"] == 0
 
     archived = client.patch(
@@ -170,8 +178,8 @@ def test_archive_and_restore(client: TestClient, admin_headers: dict[str, str]) 
     assert archived.json()["is_archived"] is True
     assert archived.json()["archived_at"] is not None
 
-    assert client.get("/api/applications", headers=admin_headers).json()["total"] == 0
-    archive_list = client.get("/api/applications", params={"archived": True}, headers=admin_headers)
+    assert client.get("/api/applications", params={"scope": "active"}, headers=admin_headers).json()["total"] == 0
+    archive_list = client.get("/api/applications", params={"scope": "archived"}, headers=admin_headers)
     assert archive_list.json()["total"] == 1
     assert archive_list.json()["items"][0]["id"] == application_id
 
@@ -183,7 +191,7 @@ def test_archive_and_restore(client: TestClient, admin_headers: dict[str, str]) 
     assert restored.status_code == 200
     assert restored.json()["is_archived"] is False
     assert restored.json()["archived_at"] is None
-    assert client.get("/api/applications", headers=admin_headers).json()["total"] == 1
+    assert client.get("/api/applications", params={"scope": "active"}, headers=admin_headers).json()["total"] == 1
 
 
 def test_archive_requires_auth(client: TestClient) -> None:
