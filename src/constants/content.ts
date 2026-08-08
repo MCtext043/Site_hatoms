@@ -6,6 +6,14 @@ export const navigation = [
   { label: 'Контакты', href: '#contacts' },
 ] as const
 
+export const eventPhotos = {
+  nto: [
+    '/events/nto/moments/nto-team-at-laptop.jpg',
+    '/events/nto/moments/nto-robot-demo.jpg',
+    '/events/nto/moments/nto-robot-control.jpg',
+  ],
+} as const
+
 export const projects = [
   { number: '01', title: 'Placeholder One', description: 'Placeholder description for a digital product with a distinct visual system.', tags: ['React', 'TypeScript', 'AI'], tone: 'from-cyan-400/35 via-blue-500/10 to-transparent' },
   { number: '02', title: 'Placeholder Two', description: 'Placeholder description for a platform built to feel precise, fast and effortless.', tags: ['Next.js', 'Python', 'Cloud'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent' },

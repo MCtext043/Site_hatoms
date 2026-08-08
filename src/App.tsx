@@ -7,7 +7,7 @@ import { Footer, ProjectRequestModal } from '@/components/sections/landing-secti
 import CertificatePage from '@/pages/certificate-page'
 import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
-import { events } from '@/constants/content'
+import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
 
@@ -39,6 +39,7 @@ export default function App() {
   const certificateCollection = certificateCollections[pathname as keyof typeof certificateCollections]
   const eventSlug = pathname.match(/^\/events\/([^/]+)$/)?.[1]
   const event = events.find((item) => item.slug === eventSlug)
+  const photos = event && (eventPhotos[event.slug as keyof typeof eventPhotos] ?? ('photos' in event ? event.photos : undefined))
 
-  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div>
+  return <div className="overflow-x-clip"><AmbientBackground />{certificate ? <CertificatePage {...certificate} /> : certificateCollection ? <CertificateCollectionPage {...certificateCollection} /> : event ? <EventPage {...event} photos={photos} /> : <><Navbar onOpenRequest={() => setRequestOpen(true)} /><Suspense fallback={<main className="min-h-screen" />}><HomePage /></Suspense><Footer onOpenRequest={() => setRequestOpen(true)} /><ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} /></>}</div>
 }
