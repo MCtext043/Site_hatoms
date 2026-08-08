@@ -33,6 +33,16 @@ h1, h2, h3 { font-family: var(--font-display); }
 @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
 @keyframes technology-marquee { to { transform: translateX(-50%); } }
 .technology-marquee-track { animation: technology-marquee 30s linear infinite; }
+.hero-logo-cursor-field { cursor: none; }
+.hero-logo-cursor { position: absolute; width: 3.25rem; height: 3.25rem; transform: translate(-50%, -50%); border: 1px solid rgba(165, 243, 252, .68); border-radius: 999px; background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.35), rgba(34,211,238,.14) 35%, rgba(8,15,30,.86) 73%); box-shadow: inset 0 0 18px rgba(255,255,255,.14), 0 12px 34px rgba(34,211,238,.32), 0 0 0 9px rgba(34,211,238,.05); backdrop-filter: blur(10px); animation: cursor-float 2.7s ease-in-out infinite; }
+.hero-logo-cursor-core { position: absolute; inset: 0; display: grid; place-items: center; color: #d9fbff; filter: drop-shadow(0 0 9px rgba(165,243,252,.8)); }
+.hero-logo-cursor-object { position: absolute; display: grid; width: 1.7rem; height: 1.7rem; place-items: center; border: 1px solid rgba(216,254,255,.32); border-radius: .6rem; background: rgba(7,15,29,.78); color: #b7f8ff; box-shadow: 0 0 17px rgba(34,211,238,.2); backdrop-filter: blur(8px); animation: cursor-object-orbit 2.8s var(--motion-ease) infinite; }
+.hero-logo-cursor-object--0 { top: -1rem; left: 2.35rem; animation-delay: -.2s; }.hero-logo-cursor-object--1 { top: 2.2rem; left: 2.15rem; animation-delay: -.8s; }.hero-logo-cursor-object--2 { top: 2.4rem; left: -.7rem; animation-delay: -1.35s; }.hero-logo-cursor-object--3 { top: -.65rem; left: -.85rem; animation-delay: -1.9s; }
+.hero-logo-cursor-trail { position: absolute; width: 2.45rem; height: 2.45rem; transform: translate(-50%, -50%); border: 1px solid rgba(103,232,249,.28); border-radius: 999px; background: rgba(34,211,238,.08); filter: blur(3px); animation: cursor-trail-out .58s var(--motion-ease) forwards; }
+@keyframes cursor-float { 50% { transform: translate(-50%, -54%) scale(1.05) rotate(4deg); } }
+@keyframes cursor-object-orbit { 50% { transform: translateY(-4px) rotate(14deg) scale(1.12); color: #fff; } }
+@keyframes cursor-trail-out { to { transform: translate(-50%, -50%) scale(1.85); opacity: 0; filter: blur(9px); } }
+@media (hover: none), (pointer: coarse) { .hero-logo-cursor-field { cursor: auto; } }
 .project-stage { position: relative; }
 .project-stage__halo { pointer-events: none; position: absolute; top: 15%; left: 50%; z-index: -1; width: min(52rem, 76vw); height: 19rem; transform: translateX(-50%); background: radial-gradient(ellipse, rgba(34, 211, 238, .16), rgba(139, 92, 246, .07) 42%, transparent 72%); filter: blur(18px); }
 .project-stage__viewport { overflow: visible; padding: .5rem 0 2rem; }

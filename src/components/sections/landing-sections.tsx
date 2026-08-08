@@ -1,6 +1,6 @@
-import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, GraduationCap, Send, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Braces, ChevronDown, Cpu, Database, ExternalLink, GraduationCap, Send, Sparkles, Terminal, X } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { events, primaryTechnologies, projects, technologies, technologyCategories } from '@/constants/content'
 import { Button, SectionHeading } from '@/components/ui/primitives'
@@ -8,6 +8,39 @@ import { TechnologyLogo } from '@/components/ui/technology-logo'
 import teamLogo from '@/assets/hatoms-wordmark.png'
 
 const reveal = { initial: { opacity: 0, y: 24, filter: 'blur(8px)' }, whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' }, viewport: { once: true, amount: 0.2 }, transition: { duration: 0.7 } }
+
+type CursorPoint = { x: number; y: number; id: number }
+const cursorObjects = [Terminal, Cpu, Database, Braces]
+
+function LogoCursorField() {
+  const [cursor, setCursor] = useState({ x: 50, y: 50, visible: false })
+  const [trail, setTrail] = useState<CursorPoint[]>([])
+  const lastTrailAt = useRef(0)
+
+  const moveCursor = (event: React.PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const x = event.clientX - bounds.left
+    const y = event.clientY - bounds.top
+    setCursor({ x, y, visible: true })
+    if (event.timeStamp - lastTrailAt.current > 48) {
+      lastTrailAt.current = event.timeStamp
+      setTrail((points) => [...points, { x, y, id: event.timeStamp }].slice(-7))
+    }
+  }
+
+  return (
+    <div className="hero-logo-cursor-field absolute -inset-[8%]" onPointerEnter={moveCursor} onPointerMove={moveCursor} onPointerLeave={() => { setCursor((current) => ({ ...current, visible: false })); setTrail([]) }}>
+      <img src={teamLogo} alt="Логотип команды Hatoms" className="absolute inset-[20%] z-10 h-[60%] w-[60%] object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" />
+      <div className="pointer-events-none absolute inset-0 z-20 hidden overflow-visible md:block" aria-hidden="true">
+        {trail.map((point, index) => <span key={point.id} className="hero-logo-cursor-trail" style={{ left: point.x, top: point.y, opacity: (index + 1) / (trail.length + 2) }} />)}
+        {cursor.visible && <div className="hero-logo-cursor" style={{ left: cursor.x, top: cursor.y }}>
+          <span className="hero-logo-cursor-core"><Sparkles className="h-4 w-4" /></span>
+          {cursorObjects.map((Icon, index) => <span key={index} className={`hero-logo-cursor-object hero-logo-cursor-object--${index}`}><Icon className="h-3.5 w-3.5" /></span>)}
+        </div>}
+      </div>
+    </div>
+  )
+}
 
 function LegacyHero() {
   const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -29,7 +62,7 @@ export function Hero() {
         <motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md">
           <div className="absolute inset-[10%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" />
           <div className="absolute inset-[18%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" />
-          <div className="absolute inset-[15%] grid place-items-center"><img src={teamLogo} alt="Логотип команды Hatoms" className="h-full w-full object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" /></div>
+          <LogoCursorField />
           <div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div>
           <div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div>
         </motion.div>
