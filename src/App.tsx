@@ -9,6 +9,7 @@ import CertificatePage from '@/pages/certificate-page'
 import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
 import HeartOfUdmurtiaPage from '@/pages/heart-of-udmurtia-page'
+import SmartWalletPage from '@/pages/smart-wallet-page'
 import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
@@ -30,12 +31,12 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [pathname, state])
   const certificates = {
-    '/certificates/samsung/derendyaev': { name: 'Александр Дерендяев', image: '/certificates/samsung-derendyaev.png' },
-    '/certificates/samsung/mironenko': { name: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.png' },
+    '/certificates/samsung/derendyaev': { name: 'Александр Дерендяев', image: '/certificates/samsung-derendyaev.webp' },
+    '/certificates/samsung/mironenko': { name: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.webp' },
   } as const
   const certificate = certificates[pathname as keyof typeof certificates]
   const certificateCollections = {
-    '/certificates/samsung': { title: 'Samsung Innovation Campus', documents: [{ label: 'Александр Дерендяев', image: '/certificates/samsung-derendyaev.png' }, { label: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.png' }] },
+    '/certificates/samsung': { title: 'Samsung Innovation Campus', documents: [{ label: 'Александр Дерендяев', image: '/certificates/samsung-derendyaev.webp' }, { label: 'Виктор Мироненко', image: '/certificates/samsung-mironenko.webp' }] },
     '/certificates/yandex': { title: 'Яндекс Лицей', documents: [{ label: 'Александр Дерендяев', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2501190050&lastName=Дерендяев' }, { label: 'Виктор Мироненко', url: 'https://lms.yandex.ru/certificate/check/?certNumber=2502208312&lastName=Мироненко' }] },
   } as const
   const certificateCollection = certificateCollections[pathname as keyof typeof certificateCollections]
@@ -57,6 +58,8 @@ export default function App() {
         <EventPage {...event} photos={photos} />
       ) : pathname === '/projects/heart-of-udm' ? (
         <HeartOfUdmurtiaPage />
+      ) : pathname === '/projects/smart-wallet' ? (
+        <SmartWalletPage />
       ) : (
         <>
           <Navbar onOpenRequest={() => setRequestOpen(true)} />

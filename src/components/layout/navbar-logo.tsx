@@ -2,7 +2,7 @@ import { Menu, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import { navigation } from '@/constants/content'
-import teamLogo from '@/assets/hatoms-wordmark.png'
+import teamLogo from '@/assets/hatoms-wordmark.webp'
 
 export function Navbar({ onOpenRequest }: { onOpenRequest: () => void }) {
   const [open, setOpen] = useState(false)

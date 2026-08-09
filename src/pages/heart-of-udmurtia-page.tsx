@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 
 const figmaUrl = 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0'
 const projectSiteUrl = 'https://hearthofudmurtia.tilda.ws/page18000'
-const screencast = Array.from({ length: 18 }, (_, index) => `/projects/heart-udm/screencast/screen-${String(index + 1).padStart(2, '0')}.png`)
-const presentation = Array.from({ length: 27 }, (_, index) => `/projects/heart-udm/presentation/slide-${String(index + 1).padStart(2, '0')}.png`)
+const screencast = Array.from({ length: 18 }, (_, index) => `/projects/heart-udm/screencast/screen-${String(index + 1).padStart(2, '0')}.webp`)
+const presentation = Array.from({ length: 27 }, (_, index) => `/projects/heart-udm/presentation/slide-${String(index + 1).padStart(2, '0')}.webp`)
 const technologies = [
   { label: 'Android', value: 'Kotlin', detail: 'Нативное Android-приложение' },
   { label: 'iOS', value: 'Swift', detail: 'Нативное iOS-приложение' },
@@ -17,10 +17,10 @@ const publications = [
   { source: 'РИА Новости', title: 'Школьники из Удмуртии представили собственные ИТ-разработки', url: 'https://ria.ru/20260331/shkolniki-2084112402.html?ysclid=mnhtk90pcr130038826' },
 ] as const
 const gallery = [
-  { type: 'image', src: '/projects/heart-udm/gallery/meeting-01.jpg', alt: 'Презентация проекта на встрече' },
-  { type: 'image', src: '/projects/heart-udm/gallery/meeting-02.jpg', alt: 'Команда проекта на встрече' },
-  { type: 'image', src: '/projects/heart-udm/gallery/meeting-03.jpg', alt: 'Команда Hatoms с презентацией приложения' },
-  { type: 'image', src: '/projects/heart-udm/gallery/meeting-04.jpg', alt: 'Команда проекта на групповой фотографии' },
+  { type: 'image', src: '/projects/heart-udm/gallery/meeting-01.webp', alt: 'Презентация проекта на встрече' },
+  { type: 'image', src: '/projects/heart-udm/gallery/meeting-02.webp', alt: 'Команда проекта на встрече' },
+  { type: 'image', src: '/projects/heart-udm/gallery/meeting-03.webp', alt: 'Команда Hatoms с презентацией приложения' },
+  { type: 'image', src: '/projects/heart-udm/gallery/meeting-04.webp', alt: 'Команда проекта на групповой фотографии' },
   { type: 'video', src: '/projects/heart-udm/gallery/project-demo.mp4', alt: 'Видео с презентации проекта' },
 ] as const
 
