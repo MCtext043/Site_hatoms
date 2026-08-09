@@ -244,7 +244,10 @@ export default function AdminPage() {
   const requestIdRef = useRef(0)
 
   const queryFilters = useMemo(
-    () => ({ ...applied, scope: (tab === 'archive' ? 'archived' : 'active') as const }),
+    () => ({
+      ...applied,
+      scope: tab === 'archive' ? ('archived' as const) : ('active' as const),
+    }),
     [applied, tab],
   )
 

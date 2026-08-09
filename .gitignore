@@ -15,3 +15,6 @@ backend/**/*.db
 *.log
 .idea/
 .vscode/
+hatoms-deploy.tgz
+.deploy-secrets.local
+
