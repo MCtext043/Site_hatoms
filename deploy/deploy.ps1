@@ -1,5 +1,6 @@
 # HATOMS one-shot production deploy (Windows / PowerShell)
-# Usage from repo root:
+# For remote VPS use: .\deploy\redeploy.ps1
+# Local/server usage from repo root:
 #   .\deploy\deploy.ps1
 #   .\deploy\deploy.ps1 -Pull
 #   .\deploy\deploy.ps1 -NoCache
@@ -66,7 +67,7 @@ Write-Host "==> docker compose up"
 docker compose -f $ComposeFile up -d --remove-orphans
 
 Start-Sleep -Seconds 3
-$webPort = if ($env:WEB_PORT) { $env:WEB_PORT } else { "80" }
+$webPort = if ($env:WEB_PORT) { $env:WEB_PORT } else { "8080" }
 
 try {
   $health = Invoke-RestMethod "http://127.0.0.1:$webPort/health"

@@ -78,6 +78,11 @@ if [[ "$POSTGRES_PASSWORD" == "change-me-strong-password" || "$ADMIN_TOKEN" == "
   echo "WARNING: default secrets detected. Change POSTGRES_PASSWORD and ADMIN_TOKEN before public deploy."
 fi
 
+WEB_PORT_VALUE="${WEB_PORT:-8080}"
+if command -v ufw >/dev/null 2>&1; then
+  ufw allow "${WEB_PORT_VALUE}/tcp" >/dev/null 2>&1 || true
+fi
+
 if [[ "$DO_PULL" -eq 1 ]]; then
   if [[ -d .git ]]; then
     echo "==> git pull"
@@ -100,7 +105,6 @@ docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
 echo "==> waiting for health"
 sleep 3
-WEB_PORT_VALUE="${WEB_PORT:-80}"
 if command -v curl >/dev/null 2>&1; then
   if curl -fsS "http://127.0.0.1:${WEB_PORT_VALUE}/health" >/dev/null; then
     echo "Health OK: http://127.0.0.1:${WEB_PORT_VALUE}/health"

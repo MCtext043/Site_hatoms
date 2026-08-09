@@ -17,4 +17,7 @@ backend/**/*.db
 .vscode/
 hatoms-deploy.tgz
 .deploy-secrets.local
+deploy/server.local.env
+
+
 
