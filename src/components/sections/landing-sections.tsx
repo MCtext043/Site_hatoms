@@ -108,24 +108,24 @@ function ProjectCard({ index, position, cardOffset, cardWidth, isHovered, dimmed
       onKeyDown={(event) => { if (isPreview && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); onSelect(index) } }}
       tabIndex={isPreview ? 0 : -1}
       aria-hidden={isFar}
-      className={`project-card group absolute left-1/2 top-0 w-[min(88vw,48rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border p-3 text-left ${isActive ? 'project-card--active cursor-grab border-cyan-200/30 shadow-[0_26px_80px_rgba(0,212,255,.16)] active:cursor-grabbing' : 'project-card--preview border-white/[.10] bg-[#0b0e18]/85'} ${isPreview ? 'cursor-pointer' : 'pointer-events-none'}`}
+      className={`project-card group absolute left-1/2 top-0 w-[min(80vw,42rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border p-3 text-left ${isActive ? 'project-card--active cursor-grab border-cyan-200/30 shadow-[0_26px_80px_rgba(0,212,255,.16)] active:cursor-grabbing' : 'project-card--preview border-white/[.10] bg-[#0b0e18]/85'} ${isFar ? 'pointer-events-none' : isPreview ? 'cursor-pointer' : ''}`}
       style={isActive ? { touchAction: 'pan-y' } : undefined}
     >
       {isActive && <div className="project-card__active-backing" aria-hidden="true" />}
       <div className="project-card__content relative z-20">
         <div className={`relative aspect-[2.05] overflow-hidden rounded-[1.2rem] bg-[#111827] bg-gradient-to-br ${project.tone}`}>
-          {'screenshots' in project && <div className="project-screencast-track" aria-hidden="true">{[...project.screenshots, ...project.screenshots].map((screenshot, screenshotIndex) => <img key={`${screenshot}-${screenshotIndex}`} src={screenshot} alt="" className="project-screencast-frame" />)}</div>}
-          <div className={`absolute inset-0 ${'screenshots' in project ? 'bg-[linear-gradient(90deg,rgba(4,6,14,.54),transparent_45%,rgba(4,6,14,.18)),linear-gradient(0deg,rgba(4,6,14,.62),transparent_58%)]' : 'bg-[radial-gradient(circle_at_74%_20%,rgba(255,255,255,.25),transparent_24%),linear-gradient(135deg,transparent_35%,rgba(5,8,16,.6))]'}`} />
-          <span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/20 font-mono text-[11px] tracking-widest text-white/80 backdrop-blur">{project.number}</span>
+          <img src={project.coverImage} alt={project.title} className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,6,14,.4),transparent_45%,rgba(4,6,14,.12)),linear-gradient(0deg,rgba(4,6,14,.48),transparent_58%)]" />
+          {!('caseUrl' in project) && <span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/20 font-mono text-[11px] tracking-widest text-white/80 backdrop-blur">{project.number}</span>}
           <span className="absolute bottom-4 left-5 text-[10px] uppercase tracking-[.24em] text-white/70">Selected work</span>
           <div className="absolute inset-x-5 bottom-3 h-px bg-gradient-to-r from-cyan-100 via-white/80 to-transparent" />
         </div>
         <div className="relative px-3 pb-3 pt-5">
-          <p className="text-[10px] uppercase tracking-[.22em] text-cyan-100/65">Проект {project.number} · Digital product</p>
+          <p className="text-[10px] uppercase tracking-[.22em] text-cyan-100/65">{'caseUrl' in project ? 'Mobile application' : `Проект ${project.number} · Digital product`}</p>
           <h3 className="mt-2 text-2xl font-medium tracking-[-.035em] text-white sm:text-[1.7rem]">{project.title}</h3>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{project.description}</p>
           <div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-white/[.08] bg-white/[.055] px-3 py-1.5 text-[10px] font-medium tracking-wide text-zinc-200">{tag}</span>)}</div>
-          {isActive && ('url' in project ? <a href={project.url} target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Открыть в Figma <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></a> : <button type="button" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Открыть кейс <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>)}
+          {isActive && ('caseUrl' in project ? <Link to={project.caseUrl} onPointerDownCapture={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Подробнее о проекте <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link> : <button type="button" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Открыть кейс <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>)}
         </div>
       </div>
     </motion.article>
@@ -153,7 +153,7 @@ export function Projects() {
     return forward > projects.length / 2 ? forward - projects.length : forward
   }
   const cardOffset = Math.min(viewportWidth < 768 ? viewportWidth * 0.62 : viewportWidth * 0.36, 470)
-  const cardWidth = Math.min(viewportWidth * (viewportWidth < 768 ? 0.9 : 0.88), 768)
+  const cardWidth = Math.min(viewportWidth * (viewportWidth < 768 ? 0.9 : 0.8), 672)
   const dragProgress = Math.min(Math.abs(dragOffset) / 180, 1)
   const draggedTowards = dragOffset === 0 ? null : dragOffset < 0 ? nextProject : previousProject
   const updateHoveredProject = (clientX: number, stage: HTMLDivElement) => {

@@ -8,6 +8,7 @@ import AdminPage from '@/pages/admin-page'
 import CertificatePage from '@/pages/certificate-page'
 import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
+import HeartOfUdmurtiaPage from '@/pages/heart-of-udmurtia-page'
 import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
@@ -54,6 +55,8 @@ export default function App() {
         <CertificateCollectionPage {...certificateCollection} />
       ) : event ? (
         <EventPage {...event} photos={photos} />
+      ) : pathname === '/projects/heart-of-udm' ? (
+        <HeartOfUdmurtiaPage />
       ) : (
         <>
           <Navbar onOpenRequest={() => setRequestOpen(true)} />

@@ -21,11 +21,13 @@ export const projects = [
     description: 'Мобильный цифровой навигатор: помогает туристу открыть интересные места, построить маршрут и услышать истории города.',
     tags: ['Android + iOS', 'Kotlin + Swift', 'FastAPI'],
     tone: 'from-[#ff3154]/40 via-violet-500/20 to-slate-950',
+    coverImage: '/projects/heart-udm/cover.png',
     screenshots: ['/projects/heart-udm/screen-board-01.png', '/projects/heart-udm/screen-board-02.png'],
-    url: 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0',
+    caseUrl: '/projects/heart-of-udm',
+    figmaUrl: 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0',
   },
-  { number: '02', title: 'Placeholder Two', description: 'Placeholder description for a platform built to feel precise, fast and effortless.', tags: ['Next.js', 'Python', 'Cloud'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent' },
-  { number: '03', title: 'Placeholder Three', description: 'Placeholder description for an interface where every interaction has a purpose.', tags: ['Mobile', 'Node.js', 'Data'], tone: 'from-emerald-400/30 via-cyan-500/10 to-transparent' },
+  { number: '02', title: 'Swipe CSAT', description: 'Placeholder description for a platform built to feel precise, fast and effortless.', tags: ['Next.js', 'Python', 'Cloud'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent', coverImage: '/projects/swipe-csat-cover.png' },
+  { number: '03', title: 'SmartWallet', description: 'Placeholder description for an interface where every interaction has a purpose.', tags: ['Mobile', 'Node.js', 'Data'], tone: 'from-emerald-400/30 via-cyan-500/10 to-transparent', coverImage: '/projects/smart-wallet-cover.png' },
 ] as const
 
 export const technologyCategories = [
