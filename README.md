@@ -28,14 +28,16 @@
 
 ### Админ-панель (`/admin`)
 - Вход по Bearer-токену администратора
-- Список заявок в стилистике сайта
+- Вкладки **Активные** / **Архив**
 - Поиск по тексту (проект, организация, идея, контакты)
 - Фильтрация по датам и типу заявки
+- Перенос заявки в архив и обратно
 
 ### Backend API
 - Публичное создание заявок
 - Защищённый список и просмотр заявок
-- Поиск, фильтр по датам и типу
+- Поиск, фильтр по датам, типу и scope (`active` / `archived`)
+- Архивация через `PATCH /api/applications/{id}/archive`
 - Автодокументация Swagger / OpenAPI
 - Health-check с проверкой PostgreSQL
 
@@ -236,7 +238,7 @@ pytest -v
 
 ## Деплой на сервер
 
-Рекомендуемый способ — **Docker Compose (prod)**: PostgreSQL + FastAPI + nginx со статикой.
+Рекомендуемый способ — **один скрипт**: он проверит `.env`, соберёт образы и поднимет PostgreSQL + FastAPI + nginx.
 
 ### 1. Подготовка сервера
 
@@ -259,10 +261,33 @@ nano .env
 | `ADMIN_TOKEN` | Секрет входа в `/admin` |
 | `CORS_ORIGINS` | Домены сайта, например `https://hatoms.example` |
 
-### 3. Запуск
+### 3. Запуск одной командой
+
+**Linux / VPS:**
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d --build
+chmod +x deploy/deploy.sh
+./deploy/deploy.sh
+```
+
+Обновление с `git pull`:
+
+```bash
+./deploy/deploy.sh --pull
+```
+
+Полная пересборка без кэша:
+
+```bash
+./deploy/deploy.sh --pull --no-cache
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.\deploy\deploy.ps1
+.\deploy\deploy.ps1 -Pull
+.\deploy\deploy.ps1 -Pull -NoCache
 ```
 
 Сервисы:
@@ -277,22 +302,14 @@ docker compose -f docker-compose.prod.yml up -d --build
 Админка: `http://<server>/admin`  
 Swagger: `http://<server>/docs`
 
-### 4. Обновление
-
-```bash
-git pull
-docker compose -f docker-compose.prod.yml up -d --build
-```
-
-### 5. Логи и статус
+### 4. Логи и статус
 
 ```bash
 docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs -f api
 ```
 
-Таблицы создаются автоматически при старте API (`create_all`).  
-Для сложных миграций в будущем можно подключить Alembic — текущая схема укладывается в один bootstrap.
+Таблицы создаются автоматически при старте API (`create_all` + лёгкий ensure schema).
 
 ---
 
@@ -303,8 +320,9 @@ docker compose -f docker-compose.prod.yml logs -f api
 | Метод | Путь | Доступ | Описание |
 |-------|------|--------|----------|
 | `POST` | `/api/applications` | публичный | Создать заявку |
-| `GET` | `/api/applications` | Bearer | Список + `q`, `date_from`, `date_to`, `request_type` |
+| `GET` | `/api/applications` | Bearer | Список + `scope=active\|archived`, `q`, даты, тип |
 | `GET` | `/api/applications/{id}` | Bearer | Одна заявка |
+| `PATCH` | `/api/applications/{id}/archive` | Bearer | В архив / из архива |
 | `GET` | `/health` | публичный | Статус приложения и БД |
 | `GET` | `/docs` | публичный | Swagger UI |
 
@@ -326,7 +344,7 @@ curl -X POST http://127.0.0.1:8000/api/applications \
 ### Пример списка (админ)
 
 ```bash
-curl "http://127.0.0.1:8000/api/applications?q=доставки&date_from=2026-01-01" \
+curl "http://127.0.0.1:8000/api/applications?q=доставки&date_from=2026-01-01&scope=active" \
   -H "Authorization: Bearer change-me-admin-token"
 ```
 
@@ -371,7 +389,7 @@ curl "http://127.0.0.1:8000/api/applications?q=доставки&date_from=2026-0
 **Прод**
 
 1. Заполнить `.env`  
-2. `docker compose -f docker-compose.prod.yml up -d --build`  
+2. `./deploy/deploy.sh` (или `.\deploy\deploy.ps1`)  
 3. Проверить `/health` и отправку тестовой заявки  
 
 ---

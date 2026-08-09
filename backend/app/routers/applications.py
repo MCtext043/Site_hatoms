@@ -67,9 +67,10 @@ def list_applications(
     date_from: date | None = Query(default=None, description="Начало периода (включительно), YYYY-MM-DD"),
     date_to: date | None = Query(default=None, description="Конец периода (включительно), YYYY-MM-DD"),
     request_type: str | None = Query(default=None, pattern="^(idea|help)$", description="Фильтр по типу заявки"),
-    archived: bool = Query(
-        default=False,
-        description="False — активные заявки, True — архив",
+    scope: str = Query(
+        default="active",
+        pattern="^(active|archived)$",
+        description="active — активные заявки, archived — архив",
     ),
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
@@ -81,7 +82,8 @@ def list_applications(
             detail="date_from не может быть позже date_to",
         )
 
-    filters = [Application.is_archived.is_(archived)]
+    want_archived = scope == "archived"
+    filters = [Application.is_archived.is_(want_archived)]
 
     if request_type:
         filters.append(Application.request_type == request_type)

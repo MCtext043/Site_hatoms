@@ -241,20 +241,25 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [busyId, setBusyId] = useState<number | null>(null)
+  const requestIdRef = useRef(0)
 
   const queryFilters = useMemo(
-    () => ({ ...applied, archived: tab === 'archive' }),
+    () => ({ ...applied, scope: (tab === 'archive' ? 'archived' : 'active') as const }),
     [applied, tab],
   )
 
-  const load = useCallback(async (nextFilters: ApplicationFilters) => {
+  const load = useCallback(async (nextFilters: ApplicationFilters, signal?: AbortSignal) => {
+    const requestId = ++requestIdRef.current
     setLoading(true)
     setError('')
     try {
-      const data = await fetchApplications(nextFilters)
+      const data = await fetchApplications(nextFilters, signal)
+      if (requestId !== requestIdRef.current) return
       setItems(data.items)
       setTotal(data.total)
     } catch (err) {
+      if (signal?.aborted || (err instanceof DOMException && err.name === 'AbortError')) return
+      if (requestId !== requestIdRef.current) return
       const message = err instanceof Error ? err.message : 'Не удалось загрузить заявки'
       setError(message)
       if (err instanceof ApiError && err.status === 401) {
@@ -262,13 +267,15 @@ export default function AdminPage() {
         setAuthed(false)
       }
     } finally {
-      setLoading(false)
+      if (requestId === requestIdRef.current) setLoading(false)
     }
   }, [])
 
   useEffect(() => {
     if (!authed) return
-    void load(queryFilters)
+    const controller = new AbortController()
+    void load(queryFilters, controller.signal)
+    return () => controller.abort()
   }, [authed, queryFilters, load])
 
   const emptyMessage = useMemo(() => {
@@ -282,7 +289,9 @@ export default function AdminPage() {
     setError('')
     try {
       await setApplicationArchived(item.id, !item.is_archived)
-      await load(queryFilters)
+      // Убираем карточку из текущего списка сразу — без гонки со старым reload
+      setItems((prev) => prev.filter((row) => row.id !== item.id))
+      setTotal((prev) => Math.max(0, prev - 1))
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Не удалось обновить статус'
       setError(message)

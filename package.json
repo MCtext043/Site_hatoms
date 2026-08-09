@@ -11,7 +11,10 @@
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
     "api:dev": "cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
-    "test:api": "cd backend && pytest -v"
+    "test:api": "cd backend && pytest -v",
+    "deploy": "docker compose -f docker-compose.prod.yml up -d --build",
+    "deploy:ps": "docker compose -f docker-compose.prod.yml ps",
+    "deploy:logs": "docker compose -f docker-compose.prod.yml logs -f"
   },
   "dependencies": {
     "@radix-ui/react-slot": "latest",

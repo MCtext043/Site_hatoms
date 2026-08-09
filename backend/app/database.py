@@ -63,11 +63,29 @@ def _ensure_archive_columns() -> None:
             statements.append("ALTER TABLE applications ADD COLUMN archived_at TIMESTAMPTZ")
 
     if not statements:
+        # Heal rows that somehow got NULL in is_archived
+        with engine.begin() as connection:
+            if get_settings().is_sqlite:
+                connection.execute(
+                    text("UPDATE applications SET is_archived = 0 WHERE is_archived IS NULL")
+                )
+            else:
+                connection.execute(
+                    text("UPDATE applications SET is_archived = FALSE WHERE is_archived IS NULL")
+                )
         return
 
     with engine.begin() as connection:
         for statement in statements:
             connection.execute(text(statement))
+        if get_settings().is_sqlite:
+            connection.execute(
+                text("UPDATE applications SET is_archived = 0 WHERE is_archived IS NULL")
+            )
+        else:
+            connection.execute(
+                text("UPDATE applications SET is_archived = FALSE WHERE is_archived IS NULL")
+            )
 
 
 def init_db() -> None:

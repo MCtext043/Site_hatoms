@@ -1,4 +1,5 @@
 export type RequestType = 'idea' | 'help'
+export type ApplicationScope = 'active' | 'archived'
 
 export type ApplicationPayload = {
   request_type: RequestType
@@ -31,7 +32,7 @@ export type ApplicationFilters = {
   date_from?: string
   date_to?: string
   request_type?: RequestType | ''
-  archived?: boolean
+  scope?: ApplicationScope
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
@@ -88,17 +89,21 @@ export async function createApplication(payload: ApplicationPayload): Promise<Ap
   return response.json()
 }
 
-export async function fetchApplications(filters: ApplicationFilters = {}): Promise<ApplicationListResponse> {
+export async function fetchApplications(
+  filters: ApplicationFilters = {},
+  signal?: AbortSignal,
+): Promise<ApplicationListResponse> {
   const params = new URLSearchParams()
   if (filters.q?.trim()) params.set('q', filters.q.trim())
   if (filters.date_from) params.set('date_from', filters.date_from)
   if (filters.date_to) params.set('date_to', filters.date_to)
   if (filters.request_type) params.set('request_type', filters.request_type)
-  params.set('archived', String(Boolean(filters.archived)))
+  params.set('scope', filters.scope ?? 'active')
 
-  const query = params.toString()
-  const response = await fetch(`${API_BASE}/applications?${query}`, {
+  const response = await fetch(`${API_BASE}/applications?${params.toString()}`, {
     headers: authHeaders(),
+    cache: 'no-store',
+    signal,
   })
   if (!response.ok) throw new ApiError(await parseError(response), response.status)
   return response.json()
@@ -111,6 +116,7 @@ export async function setApplicationArchived(id: number, isArchived: boolean): P
       ...authHeaders(),
       'Content-Type': 'application/json',
     },
+    cache: 'no-store',
     body: JSON.stringify({ is_archived: isArchived }),
   })
   if (!response.ok) throw new ApiError(await parseError(response), response.status)
@@ -118,8 +124,9 @@ export async function setApplicationArchived(id: number, isArchived: boolean): P
 }
 
 export async function verifyAdminToken(token: string): Promise<boolean> {
-  const response = await fetch(`${API_BASE}/applications?limit=1&archived=false`, {
+  const response = await fetch(`${API_BASE}/applications?limit=1&scope=active`, {
     headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
   })
   return response.ok
 }
