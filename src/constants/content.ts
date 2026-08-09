@@ -33,7 +33,7 @@ export const projects = [
 export const technologyCategories = [
   { title: 'Frontend', technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Next.js', 'TanStack Query', 'Zustand', 'shadcn/ui', 'Framer Motion', 'GSAP', 'Three.js', 'PyQt6'] },
   { title: 'Backend', technologies: ['FastAPI', 'Flask', 'Django', 'SQLAlchemy', 'PostgreSQL', 'Redis', 'RabbitMQ', 'Celery', 'REST API', 'WebSocket', 'JWT', 'OAuth 2.0'] },
-  { title: 'Mobile', technologies: ['Kotlin', 'Jetpack Compose', 'Coroutines', 'Retrofit', 'Room', 'Hilt', 'Firebase', 'BLE', 'NFC', 'MVVM', 'Dependency Injection'] },
+  { title: 'Mobile', technologies: ['Kotlin', 'Swift', 'Jetpack Compose', 'Coroutines', 'Retrofit', 'Room', 'Hilt', 'BLE', 'NFC', 'MVVM', 'Dependency Injection'] },
   { title: 'AI и Data', technologies: ['PyTorch', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'Hugging Face', 'LangChain', 'ONNX', 'MLflow', 'Yandex Cloud', 'MinIO'] },
   { title: 'DevOps', technologies: ['Docker', 'Kubernetes', 'Nginx', 'GitHub Actions', 'Linux', 'CI/CD', 'Prometheus', 'Grafana', 'Sentry'] },
   { title: 'Тестирование', technologies: ['Pytest', 'Vitest', 'Playwright', 'JUnit', 'Postman', 'Testcontainers'] },

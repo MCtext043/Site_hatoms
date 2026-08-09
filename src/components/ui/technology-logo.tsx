@@ -1,11 +1,11 @@
 import type { IconType } from 'react-icons'
 import * as SimpleIcons from 'react-icons/si'
-import { Boxes, Braces, Code2, Database, GitFork, Network, Radio, ShieldCheck, TestTube2 } from 'lucide-react'
+import { Boxes, Braces, Code2, Database, GitFork, Network, Nfc, Radio, ShieldCheck, TestTube2 } from 'lucide-react'
 
 const simpleIconByTechnology: Record<string, string> = {
   React: 'SiReact', TypeScript: 'SiTypescript', Vite: 'SiVite', 'Tailwind CSS': 'SiTailwindcss', 'Next.js': 'SiNextdotjs', 'TanStack Query': 'SiReactquery', Zustand: 'SiZustand', 'shadcn/ui': 'SiShadcnui', 'Framer Motion': 'SiFramer', GSAP: 'SiGreensock', 'Three.js': 'SiThreedotjs',
   FastAPI: 'SiFastapi', Flask: 'SiFlask', Django: 'SiDjango', SQLAlchemy: 'SiSqlalchemy', PostgreSQL: 'SiPostgresql', Redis: 'SiRedis', RabbitMQ: 'SiRabbitmq', Celery: 'SiCelery', WebSocket: 'SiSocketdotio', JWT: 'SiJsonwebtokens', 'OAuth 2.0': 'SiAuth0',
-  Kotlin: 'SiKotlin', 'Jetpack Compose': 'SiJetpackcompose', Retrofit: 'SiRetrofit', Room: 'SiAndroid', Hilt: 'SiAndroid', Firebase: 'SiFirebase',
+  Kotlin: 'SiKotlin', Swift: 'SiSwift', 'Jetpack Compose': 'SiJetpackcompose', Retrofit: 'SiRetrofit', Room: 'SiAndroid', Hilt: 'SiAndroid',
   PyTorch: 'SiPytorch', 'Scikit-learn': 'SiScikitlearn', OpenCV: 'SiOpencv', Pandas: 'SiPandas', NumPy: 'SiNumpy', 'Hugging Face': 'SiHuggingface', LangChain: 'SiLangchain', ONNX: 'SiOnnx', MLflow: 'SiMlflow',
   Docker: 'SiDocker', Kubernetes: 'SiKubernetes', Nginx: 'SiNginx', 'GitHub Actions': 'SiGithubactions', Linux: 'SiLinux', Prometheus: 'SiPrometheus', Grafana: 'SiGrafana', Sentry: 'SiSentry',
   Pytest: 'SiPytest', Vitest: 'SiVitest', Playwright: 'SiPlaywright', JUnit: 'SiJunit5', Postman: 'SiPostman', Testcontainers: 'SiTestcontainers',
@@ -16,7 +16,7 @@ const fallbackByTechnology = {
   'REST API': Network,
   Coroutines: Code2,
   BLE: Radio,
-  NFC: Radio,
+  NFC: Nfc,
   MVVM: Boxes,
   'Dependency Injection': GitFork,
   'CI/CD': GitFork,
