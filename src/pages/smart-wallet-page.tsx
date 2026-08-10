@@ -2,6 +2,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Code2, ExternalLink, FileText, Ma
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDialogFocusTrap } from '@/hooks/use-dialog-focus-trap'
 
 const figmaUrl = 'https://www.figma.com/design/AJwgIoGWhr0TGnjoakth3O/Smart-Wallet-кейс-чемпионат-?node-id=235-317&t=oJK4tn3ovSmpo3KN-0'
 const githubUrl = 'https://github.com/hilyyx/SmartWallet'
@@ -29,6 +30,7 @@ export default function SmartWalletPage() {
   const [screen, setScreen] = useState(0)
   const [presentationSlide, setPresentationSlide] = useState(0)
   const [lightbox, setLightbox] = useState<LightboxItem | null>(null)
+  useDialogFocusTrap(Boolean(lightbox))
   const previous = (value: number, length: number) => (value - 1 + length) % length
   const next = (value: number, length: number) => (value + 1) % length
   const getLength = (kind: LightboxItem['kind']) => kind === 'screen' ? screens.length : kind === 'presentation' ? presentation.length : gallery.length

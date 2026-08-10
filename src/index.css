@@ -6,7 +6,15 @@
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
-:root { --motion-fast: 180ms; --motion-base: 320ms; --motion-slow: 520ms; --motion-ease: cubic-bezier(.22, 1, .36, 1); }
+:root {
+  --brand-primary: #8b5cf6;
+  --brand-primary-light: #c4b5fd;
+  --brand-primary-glow: rgba(139, 92, 246, .22);
+  --motion-fast: 180ms;
+  --motion-base: 320ms;
+  --motion-slow: 520ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: #05060a; }
@@ -15,7 +23,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; }
 :where(a, button, input, textarea, select, summary, [role="button"], [role="tab"]) { transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter; transition-duration: var(--motion-base); transition-timing-function: var(--motion-ease); }
 :where(button, [role="button"], [role="tab"]):active:not(:disabled) { transform: scale(.975); }
-:where(a, button, input, textarea, select, summary, [role="button"], [role="tab"]):focus-visible { outline: 2px solid rgba(165, 243, 252, .9); outline-offset: 4px; box-shadow: 0 0 0 5px rgba(34, 211, 238, .13); }
+:where(a, button, input, textarea, select, summary, [role="button"], [role="tab"]):focus-visible { outline: 2px solid var(--brand-primary-light); outline-offset: 4px; box-shadow: 0 0 0 5px var(--brand-primary-glow); }
 @media (hover: hover) and (pointer: fine) {
   body, input, textarea, select { cursor: url('./assets/cursor-terminal.svg') 3 3, auto; }
   a, button, [role="button"], input[type="checkbox"], input[type="radio"], select, summary { cursor: url('./assets/cursor-terminal-link.svg') 10 10, pointer; }
@@ -26,8 +34,8 @@ h1, h2, h3 { font-family: var(--font-display); }
 .request-modal-scroll::-webkit-scrollbar-track { background: #090b11; }
 .request-modal-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border: 3px solid #090b11; border-radius: 999px; }
 .request-modal-scroll::-webkit-scrollbar-thumb:hover { background: #71717a; }
-::selection { background: rgba(0, 212, 255, .3); color: white; }
-.text-gradient { background: linear-gradient(105deg, #e9feff 10%, #00d4ff 43%, #a78bfa 78%, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
+::selection { background: rgba(139, 92, 246, .42); color: white; }
+.text-gradient { background: linear-gradient(105deg, #f5f3ff 8%, #c4b5fd 35%, #8b5cf6 64%, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .grid-bg { background-image: linear-gradient(rgba(148,163,184,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.045) 1px, transparent 1px); background-size: 56px 56px; mask-image: linear-gradient(to bottom, black, transparent 78%); }
 @keyframes drift { from { transform: translate3d(-2%, -2%, 0) scale(.95); } to { transform: translate3d(7%, 5%, 0) scale(1.1); } }
 @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }

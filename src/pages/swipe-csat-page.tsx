@@ -2,6 +2,7 @@ import { ArrowLeft, BarChart3, ChevronLeft, ChevronRight, MessageSquareText, Mon
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDialogFocusTrap } from '@/hooks/use-dialog-focus-trap'
 
 const screens = Array.from({ length: 9 }, (_, index) => `/projects/swipe-csat/screencast/screen-${String(index + 1).padStart(2, '0')}.png`)
 const presentation = Array.from({ length: 12 }, (_, index) => `/projects/swipe-csat/presentation/slide-${String(index + 1).padStart(2, '0')}.png`)
@@ -22,6 +23,7 @@ export default function SwipeCsatPage() {
   const [screen, setScreen] = useState(0)
   const [presentationSlide, setPresentationSlide] = useState(0)
   const [lightbox, setLightbox] = useState<'screen' | 'presentation' | null>(null)
+  useDialogFocusTrap(Boolean(lightbox))
   const previous = (value: number) => (value - 1 + screens.length) % screens.length
   const next = (value: number) => (value + 1) % screens.length
   const previousPresentation = (value: number) => (value - 1 + presentation.length) % presentation.length
@@ -35,8 +37,14 @@ export default function SwipeCsatPage() {
     if (!lightbox) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setLightbox(null)
-      if (event.key === 'ArrowLeft') lightbox === 'screen' ? setScreen(previous) : setPresentationSlide(previousPresentation)
-      if (event.key === 'ArrowRight') lightbox === 'screen' ? setScreen(next) : setPresentationSlide(nextPresentation)
+      if (event.key === 'ArrowLeft') {
+        if (lightbox === 'screen') setScreen(previous)
+        else setPresentationSlide(previousPresentation)
+      }
+      if (event.key === 'ArrowRight') {
+        if (lightbox === 'screen') setScreen(next)
+        else setPresentationSlide(nextPresentation)
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)

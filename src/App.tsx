@@ -4,16 +4,25 @@ import Lenis from 'lenis'
 import { AmbientBackground } from '@/components/layout/ambient-background'
 import { Navbar } from '@/components/layout/navbar-logo'
 import { Footer, ProjectRequestModal } from '@/components/sections/landing-sections'
-import AdminPage from '@/pages/admin-page'
-import CertificatePage from '@/pages/certificate-page'
-import CertificateCollectionPage from '@/pages/certificate-collection-page'
-import EventPage from '@/pages/event-page'
-import HeartOfUdmurtiaPage from '@/pages/heart-of-udmurtia-page'
-import SmartWalletPage from '@/pages/smart-wallet-page'
-import SwipeCsatPage from '@/pages/swipe-csat-page'
 import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
+const AdminPage = lazy(() => import('@/pages/admin-page'))
+const CertificatePage = lazy(() => import('@/pages/certificate-page'))
+const CertificateCollectionPage = lazy(() => import('@/pages/certificate-collection-page'))
+const EventPage = lazy(() => import('@/pages/event-page'))
+const HeartOfUdmurtiaPage = lazy(() => import('@/pages/heart-of-udmurtia-page'))
+const SmartWalletPage = lazy(() => import('@/pages/smart-wallet-page'))
+const SwipeCsatPage = lazy(() => import('@/pages/swipe-csat-page'))
+const NotFoundPage = lazy(() => import('@/pages/not-found-page'))
+const pageFallback = (
+  <main className="grid min-h-[60svh] place-items-center px-5" aria-busy="true" aria-label="Загрузка страницы">
+    <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/[.035] px-5 py-3 text-sm text-zinc-300 shadow-lg">
+      <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-violet-300 shadow-[0_0_14px_rgba(196,181,253,.8)]" aria-hidden="true" />
+      <span role="status">Загрузка страницы</span>
+    </div>
+  </main>
+)
 
 export default function App() {
   const { pathname, state } = useLocation()
@@ -45,30 +54,31 @@ export default function App() {
   const event = events.find((item) => item.slug === eventSlug)
   const photos = event && (eventPhotos[event.slug as keyof typeof eventPhotos] ?? ('photos' in event ? event.photos : undefined))
   const isAdmin = pathname === '/admin'
+  const page = certificate ? (
+    <CertificatePage {...certificate} />
+  ) : certificateCollection ? (
+    <CertificateCollectionPage {...certificateCollection} />
+  ) : event ? (
+    <EventPage {...event} photos={photos} />
+  ) : pathname === '/projects/heart-of-udm' ? (
+    <HeartOfUdmurtiaPage />
+  ) : pathname === '/projects/smart-wallet' ? (
+    <SmartWalletPage />
+  ) : pathname === '/projects/swipe-csat' ? (
+    <SwipeCsatPage />
+  ) : pathname !== '/' ? (
+    <NotFoundPage />
+  ) : <HomePage onOpenRequest={() => setRequestOpen(true)} />
 
   return (
     <div className="overflow-x-clip">
       <AmbientBackground />
       {isAdmin ? (
-        <AdminPage />
-      ) : certificate ? (
-        <CertificatePage {...certificate} />
-      ) : certificateCollection ? (
-        <CertificateCollectionPage {...certificateCollection} />
-      ) : event ? (
-        <EventPage {...event} photos={photos} />
-      ) : pathname === '/projects/heart-of-udm' ? (
-        <HeartOfUdmurtiaPage />
-      ) : pathname === '/projects/smart-wallet' ? (
-        <SmartWalletPage />
-      ) : pathname === '/projects/swipe-csat' ? (
-        <SwipeCsatPage />
+        <Suspense fallback={pageFallback}><AdminPage /></Suspense>
       ) : (
         <>
           <Navbar onOpenRequest={() => setRequestOpen(true)} />
-          <Suspense fallback={<main className="min-h-screen" />}>
-            <HomePage />
-          </Suspense>
+          <Suspense fallback={pageFallback}>{page}</Suspense>
           <Footer onOpenRequest={() => setRequestOpen(true)} />
           <ProjectRequestModal open={requestOpen} onClose={() => setRequestOpen(false)} />
         </>

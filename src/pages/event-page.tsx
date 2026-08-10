@@ -2,6 +2,7 @@ import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, GitBranch, Images, 
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useDialogFocusTrap } from '@/hooks/use-dialog-focus-trap'
 
 type EventPageProps = {
   title: string
@@ -16,7 +17,7 @@ type EventPageProps = {
   repositories?: readonly { label: string, url: string }[]
 }
 
-export default function EventPage({ title, date, subtitle, description, gallery, photos, presentation, demo, repositoryUrl, repositories }: EventPageProps) {
+export default function EventPage({ title, date, subtitle, description, gallery, photos: initialPhotos, presentation, demo: initialDemo, repositoryUrl, repositories }: EventPageProps) {
   const navigate = useNavigate()
   if (title === 'НТО') {
     subtitle = undefined
@@ -30,14 +31,12 @@ export default function EventPage({ title, date, subtitle, description, gallery,
 
 В этом профиле мы создавали Android-приложение в команде, проходя весь путь от идеи до готового продукта с серверной частью. Мы прорабатывали пользовательский сценарий, интерфейс, мобильную разработку и взаимодействие с бэкендом. Для нас это был практический опыт создания полноценного приложения — с распределением ролей, общими решениями и результатом, который можно добавить в портфолио.`
   }
-  const momentPhotos = photos
-  const galleryVideo = demo?.includes('/events/big-challenges/') ? demo : undefined
+  const momentPhotos = initialPhotos
+  const galleryVideo = initialDemo?.includes('/events/big-challenges/') ? initialDemo : undefined
+  const photos = galleryVideo ? undefined : initialPhotos
+  const demo = galleryVideo ? undefined : initialDemo
   const leadPhoto = momentPhotos?.find((photo) => photo.includes('sirius-hotel'))
   const remainingMomentPhotos = momentPhotos?.filter((photo) => photo !== leadPhoto)
-  if (galleryVideo) {
-    photos = undefined
-    demo = undefined
-  }
   const [activeImage, setActiveImage] = useState<number | null>(null)
   const [previewImage, setPreviewImage] = useState(0)
   const [activePhoto, setActivePhoto] = useState<number | null>(null)
@@ -45,6 +44,7 @@ export default function EventPage({ title, date, subtitle, description, gallery,
   const [activePresentation, setActivePresentation] = useState<number | null>(null)
   const [activeBigGalleryItem, setActiveBigGalleryItem] = useState<number | null>(null)
   const [zoom, setZoom] = useState(1)
+  useDialogFocusTrap(activeImage !== null || activePhoto !== null || activePresentation !== null || activeBigGalleryItem !== null)
   const hasGallery = Boolean(gallery?.length)
   const openGallery = (index: number) => { setActiveImage(index); setZoom(1) }
   const closeGallery = () => { setActiveImage(null); setZoom(1) }
@@ -69,11 +69,29 @@ export default function EventPage({ title, date, subtitle, description, gallery,
   useEffect(() => {
     if (activeImage === null && activePhoto === null && activePresentation === null && activeBigGalleryItem === null) return
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { closeGallery(); closePhoto(); closePresentation(); closeBigGallery() }
-      if (event.key === 'ArrowLeft') activeBigGalleryItem !== null ? showPreviousBigGalleryItem() : activePresentation !== null ? showPreviousPresentation() : activePhoto !== null ? showPreviousPhoto() : showPrevious()
-      if (event.key === 'ArrowRight') activeBigGalleryItem !== null ? showNextBigGalleryItem() : activePresentation !== null ? showNextPresentation() : activePhoto !== null ? showNextPhoto() : showNext()
-      if (event.key === '+' || event.key === '=') { event.preventDefault(); changeZoom(.25) }
-      if (event.key === '-') { event.preventDefault(); changeZoom(-.25) }
+      if (event.key === 'Escape') {
+        setActiveImage(null)
+        setActivePhoto(null)
+        setActivePresentation(null)
+        setActiveBigGalleryItem(null)
+        setZoom(1)
+      }
+      if (event.key === 'ArrowLeft') {
+        if (activeBigGalleryItem !== null && bigGalleryItems.length) setActiveBigGalleryItem((current) => current === null ? null : (current - 1 + bigGalleryItems.length) % bigGalleryItems.length)
+        else if (activePresentation !== null && presentation?.length) setActivePresentation((current) => current === null ? null : (current - 1 + presentation.length) % presentation.length)
+        else if (activePhoto !== null && photos?.length) setActivePhoto((current) => current === null ? null : (current - 1 + photos.length) % photos.length)
+        else if (gallery?.length) setActiveImage((current) => current === null ? null : (current - 1 + gallery.length) % gallery.length)
+        setZoom(1)
+      }
+      if (event.key === 'ArrowRight') {
+        if (activeBigGalleryItem !== null && bigGalleryItems.length) setActiveBigGalleryItem((current) => current === null ? null : (current + 1) % bigGalleryItems.length)
+        else if (activePresentation !== null && presentation?.length) setActivePresentation((current) => current === null ? null : (current + 1) % presentation.length)
+        else if (activePhoto !== null && photos?.length) setActivePhoto((current) => current === null ? null : (current + 1) % photos.length)
+        else if (gallery?.length) setActiveImage((current) => current === null ? null : (current + 1) % gallery.length)
+        setZoom(1)
+      }
+      if (event.key === '+' || event.key === '=') { event.preventDefault(); setZoom((current) => Math.min(2.5, Number((current + .25).toFixed(1)))) }
+      if (event.key === '-') { event.preventDefault(); setZoom((current) => Math.max(1, Number((current - .25).toFixed(1)))) }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)

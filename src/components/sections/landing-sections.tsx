@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Braces, ChevronDown, Cpu, Database, ExternalLink, GraduationCap, Send, Sparkles, Terminal, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Braces, CheckCircle2, ChevronDown, CircleHelp, ClipboardCheck, Compass, Cpu, Database, ExternalLink, GraduationCap, Rocket, Send, Sparkles, Terminal, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
@@ -47,7 +47,7 @@ function LegacyHero() {
   return <section id="home" className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-6xl items-center px-5 pb-20 pt-24 sm:px-8"><div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_.85fr]"><motion.div {...reveal}><p className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[.24em] text-cyan-200/70"><Sparkles className="h-3.5 w-3.5" /> Студия цифровых продуктов</p><h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Идеи становятся <span className="text-gradient">продуктами</span></h1><p className="mt-7 max-w-xl text-pretty text-base leading-7 text-zinc-400 sm:text-lg">Создаём цифровые решения для задач, которым важно стать реальностью.</p><div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div></motion.div><motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md"><div className="absolute inset-[13%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" /><div className="absolute inset-[23%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" /><div className="absolute inset-[33%] grid place-items-center rounded-full bg-gradient-to-br from-cyan-200 to-violet-500 text-4xl text-black shadow-[0_0_70px_rgba(124,58,237,.45)]">✦</div><div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Фронтенд и мобильная разработка</div><div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">ML и AI</div></motion.div></div></section>
 }
 
-export function Hero() {
+export function Hero({ onOpenRequest }: { onOpenRequest: () => void }) {
   const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
 
   return (
@@ -57,7 +57,7 @@ export function Hero() {
           <p className="mb-6 flex items-center gap-2 text-[11px] uppercase tracking-[.22em] text-cyan-200/65 sm:text-xs"><Sparkles className="h-3 w-3" /> Минимум вопросов. Максимум действий</p>
           <h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Hatoms <span className="text-gradient">company</span></h1>
           <p className="mt-8 max-w-2xl text-pretty text-lg leading-8 text-zinc-300 sm:text-xl sm:leading-8">Превращаем идеи в работающие продукты,<br className="hidden sm:block" /> воплощая самые смелые задумки клиентов и заказчиков.</p>
-          <div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div>
+          <div className="mt-9 flex flex-wrap gap-3"><Button onClick={onOpenRequest}>Обсудить задачу</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Смотреть кейсы</Button></div>
         </motion.div>
         <motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md">
           <div className="absolute inset-[10%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" />
@@ -313,23 +313,82 @@ export function Events() {
   return <section id="events" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Опыт команды" title={<>Мероприятия и <span className="text-gradient">события</span></>} /></motion.div><div className="mt-12 border-l border-white/10 pl-6 sm:pl-10">{events.map((event, i) => <motion.article key={event.slug} {...reveal} transition={{ duration: .6, delay: i * .1 }} className="relative mb-10 last:mb-0"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-[#05060a] bg-cyan-300 shadow-[0_0_14px_#00d4ff] sm:-left-[47px]" /><p className="font-mono text-xs tracking-wider text-cyan-200/70">{event.date}</p><Link to={`/events/${event.slug}`} className="group mt-3 block rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-violet-300/30 hover:bg-white/[.04] focus:outline-none focus:ring-2 focus:ring-cyan-300/70"><h3 className="text-lg font-medium text-white">{event.title}</h3>{(event.summary || event.subtitle) && <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{event.summary || event.subtitle}</p>}<span className="mt-4 inline-flex items-center gap-2 text-sm text-violet-200">Подробнее <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></Link></motion.article>)}</div></section>
 }
 
+const workSteps = [
+  { icon: Compass, title: 'Разбираемся в задаче', text: 'На первом созвоне уточняем цель, пользователей и ограничения. Можно прийти даже с идеей без готового ТЗ.' },
+  { icon: ClipboardCheck, title: 'Фиксируем понятный план', text: 'Собираем сценарии, состав работ и следующий практический шаг — без абстрактных обещаний.' },
+  { icon: Rocket, title: 'Делаем и показываем прогресс', text: 'Двигаемся короткими итерациями: вы видите результат, даёте обратную связь и влияете на продукт.' },
+] as const
+
+const clientQuestions = [
+  { question: 'Нужен ли готовый дизайн или техническое задание?', answer: 'Нет. Достаточно описать задачу и контекст — поможем превратить их в понятный план продукта.' },
+  { question: 'С какими продуктами вы работаете?', answer: 'Берём веб-сервисы, мобильные приложения, AI-инструменты, ботов и проекты на стыке софта и устройств.' },
+  { question: 'Когда можно понять сроки и стоимость?', answer: 'После первого разбора задачи: сначала договоримся о результате и объёме, затем подготовим честную оценку.' },
+] as const
+
+export function ClientJourney({ onOpenRequest }: { onOpenRequest: () => void }) {
+  return <>
+    <section id="process" className="mx-auto max-w-6xl px-5 py-28 sm:px-8">
+      <motion.div {...reveal}><SectionHeading eyebrow="Как начинается работа" title={<>Без сложного старта и <span className="text-gradient">неясных ожиданий</span></>} description="Ваша задача не обязана быть уже оформлена в техническое задание. Начнём с контекста — и вместе определим, что стоит делать первым." /></motion.div>
+      <div className="mt-12 grid gap-4 md:grid-cols-3">{workSteps.map(({ icon: Icon, title, text }, index) => <motion.article key={title} {...reveal} transition={{ duration: .5, delay: index * .08 }} className="rounded-2xl border border-white/10 bg-white/[.035] p-6"><span className="grid h-11 w-11 place-items-center rounded-xl border border-violet-200/25 bg-violet-300/[.09] text-violet-100"><Icon className="h-5 w-5" /></span><p className="mt-7 font-mono text-xs tracking-[.18em] text-violet-200/70">0{index + 1}</p><h3 className="mt-3 text-xl font-medium text-white">{title}</h3><p className="mt-3 text-sm leading-6 text-zinc-400">{text}</p></motion.article>)}</div>
+      <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-violet-200/20 bg-violet-300/[.06] p-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-lg font-medium text-white">Первая задача — понять, подходим ли мы друг другу.</p><p className="mt-2 text-sm leading-6 text-zinc-400">Расскажите о ситуации — ответим, какой следующий шаг действительно имеет смысл.</p></div><Button onClick={onOpenRequest} className="shrink-0">Обсудить задачу <ArrowRight className="h-4 w-4" /></Button></div>
+    </section>
+    <section className="mx-auto max-w-6xl px-5 py-28 sm:px-8" aria-labelledby="client-questions-heading">
+      <motion.div {...reveal} className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><p className="flex items-center gap-2 text-xs uppercase tracking-[.2em] text-violet-200/70"><CircleHelp className="h-4 w-4" /> Перед первым обращением</p><h2 id="client-questions-heading" className="mt-4 text-3xl font-semibold tracking-[-.05em] text-white sm:text-4xl">Вопросы, которые обычно возникают</h2><p className="mt-5 max-w-lg text-sm leading-7 text-zinc-400 sm:text-base">Если не нашли свой ответ — напишите в заявку в свободной форме. Не нужно подбирать технические термины.</p></div><div className="space-y-3">{clientQuestions.map(({ question, answer }) => <details key={question} className="group rounded-2xl border border-white/10 bg-white/[.035] p-5 transition open:border-violet-200/30 open:bg-violet-300/[.05]"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-medium text-white"><span>{question}</span><ChevronDown className="h-5 w-5 shrink-0 text-violet-200 transition-transform group-open:rotate-180" /></summary><p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-400">{answer}</p></details>)}</div></motion.div>
+    </section>
+    <section className="mx-auto max-w-6xl px-5 pb-28 sm:px-8" aria-labelledby="final-cta-heading"><motion.div {...reveal} className="relative overflow-hidden rounded-3xl border border-violet-200/25 bg-gradient-to-br from-violet-500/[.18] via-[#11131c] to-fuchsia-500/[.10] p-7 sm:p-10"><div className="pointer-events-none absolute -right-24 -top-32 h-72 w-72 rounded-full bg-violet-400/15 blur-3xl" /><div className="relative max-w-2xl"><p className="flex items-center gap-2 text-xs uppercase tracking-[.2em] text-violet-200/80"><CheckCircle2 className="h-4 w-4" /> Следующий шаг</p><h2 id="final-cta-heading" className="mt-4 text-3xl font-semibold tracking-[-.05em] text-white sm:text-5xl">Есть задача, которую хочется сдвинуть с места?</h2><p className="mt-5 text-base leading-7 text-zinc-300">Опишите её так, как удобно вам. Мы поможем сформулировать решение и предложим понятный формат начала работы.</p><Button onClick={onOpenRequest} className="mt-8">Оставить заявку <ArrowRight className="h-4 w-4" /></Button></div></motion.div></section>
+  </>
+}
+
 export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [requestType, setRequestType] = useState<'idea' | 'help'>('idea')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
+    const previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const previousBodyOverflow = document.body.style.overflow
     const previousHtmlOverflow = document.documentElement.style.overflow
     document.body.style.overflow = 'hidden'
     document.documentElement.style.overflow = 'hidden'
+
+    const focusModal = () => modalRef.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus()
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+        return
+      }
+
+      if (event.key !== 'Tab' || !modalRef.current) return
+      const focusable = Array.from(modalRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), summary',
+      )).filter((element) => element.offsetParent !== null)
+      if (!focusable.length) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    const focusTimer = window.setTimeout(focusModal, 0)
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
+      window.clearTimeout(focusTimer)
+      document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = previousBodyOverflow
       document.documentElement.style.overflow = previousHtmlOverflow
+      previouslyFocusedElement?.focus()
     }
-  }, [open])
+  }, [onClose, open])
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -376,8 +435,8 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="request-title" onMouseDown={onClose}>
-      <div data-lenis-prevent className="request-modal-scroll relative max-h-[90svh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-[1.75rem] border border-white/10 bg-[#090b11] p-5 shadow-2xl sm:p-7" onMouseDown={(event) => event.stopPropagation()}>
-        <button type="button" onClick={onClose} aria-label="Закрыть заявку" className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full border border-white/10 text-zinc-300 transition hover:border-cyan-200/40 hover:text-white"><X className="h-5 w-5" /></button>
+      <div ref={modalRef} data-lenis-prevent className="request-modal-scroll relative max-h-[90svh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-[1.75rem] border border-white/10 bg-[#090b11] p-5 shadow-2xl sm:p-7" onMouseDown={(event) => event.stopPropagation()}>
+        <button data-autofocus type="button" onClick={onClose} aria-label="Закрыть заявку" className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full border border-white/10 text-zinc-300 transition hover:border-cyan-200/40 hover:text-white"><X className="h-5 w-5" /></button>
         <div className="max-w-2xl pr-12">
         <p className="text-xs uppercase tracking-[.2em] text-cyan-200/70">Оставить заявку</p>
         <h2 id="request-title" className="mt-3 text-3xl font-semibold tracking-[-.05em] text-white sm:text-4xl">Давайте обсудим ваш будущий проект</h2>
@@ -404,6 +463,7 @@ export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose:
         </div> : <div className="grid gap-5"><label><span className="text-sm text-zinc-300">Расскажите, что вам хотелось бы сделать или какую задачу решить</span><textarea name="challenge" required rows={5} className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Например, хочу улучшить работу с клиентами, но пока не понимаю, какой продукт нужен" /></label><label><span className="text-sm text-zinc-300">Чем занимается организация — если она уже есть</span><input name="organization" className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Сфера, аудитория или краткий контекст" /></label></div>}
 
         <fieldset className="mt-7 border-t border-white/10 pt-6"><legend className="text-sm text-zinc-300">Как с вами связаться? <span className="text-zinc-500">Заполните хотя бы одно поле</span></legend><div className="mt-3 grid gap-3 md:grid-cols-3"><input name="phone" type="tel" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Телефон" /><input name="email" type="email" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Почта" /><input name="telegram" onInput={(event) => event.currentTarget.setCustomValidity('')} className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-200/50" placeholder="Telegram" /></div></fieldset>
+        <label className="mt-5 flex cursor-pointer items-start gap-3 text-sm leading-5 text-zinc-400"><input name="personalDataConsent" type="checkbox" required className="mt-0.5 h-4 w-4 shrink-0 accent-violet-400" /><span>Согласен на обработку указанных контактов исключительно для ответа на заявку.</span></label>
         <div className="mt-7 flex flex-wrap items-center gap-4">
           <Button type="submit" disabled={submitting || submitted}>{submitting ? 'Отправка…' : 'Отправить заявку'}</Button>
           {submitted && <p className="text-sm text-cyan-100">Спасибо! Заявка заполнена — мы свяжемся с вами по указанному контакту.</p>}

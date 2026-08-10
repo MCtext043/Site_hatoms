@@ -2,6 +2,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink, Images, Layers3, Ma
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDialogFocusTrap } from '@/hooks/use-dialog-focus-trap'
 
 const figmaUrl = 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0'
 const projectSiteUrl = 'https://hearthofudmurtia.tilda.ws/page18000'
@@ -36,6 +37,7 @@ export default function HeartOfUdmurtiaPage() {
   const [screencastSlide, setScreencastSlide] = useState(0)
   const [presentationSlide, setPresentationSlide] = useState(0)
   const [lightbox, setLightbox] = useState<{ type: GalleryKind, index: number } | null>(null)
+  useDialogFocusTrap(Boolean(lightbox))
   const previous = (value: number, length: number) => (value - 1 + length) % length
   const next = (value: number, length: number) => (value + 1) % length
   const lightboxSlides = lightbox?.type === 'screencast' ? screencast : presentation
