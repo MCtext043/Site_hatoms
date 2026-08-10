@@ -26,7 +26,7 @@ export const projects = [
     caseUrl: '/projects/heart-of-udm',
     figmaUrl: 'https://www.figma.com/design/W4ibJ1CC8pT5rEqZ5FdxzU/Heart_of_UDM?node-id=0-1&p=f&t=pgWnfg5Es8AuReic-0',
   },
-  { number: '02', title: 'Swipe CSAT', description: 'Placeholder description for a platform built to feel precise, fast and effortless.', tags: ['Next.js', 'Python', 'Cloud'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent', coverImage: '/projects/swipe-csat-cover.webp' },
+  { number: '02', title: 'Swipe CSAT', description: 'Мобильный сервис для сбора отзывов о товарах и оценки клиентского опыта после покупки.', tags: ['Мобильное приложение', 'CSAT', 'UX/UI'], tone: 'from-violet-500/35 via-fuchsia-500/10 to-transparent', coverImage: '/projects/swipe-csat-cover.webp', caseUrl: '/projects/swipe-csat' },
   { number: '03', title: 'SmartWallet', description: 'Умный кошелёк автоматически выбирает карту с максимальным кешбэком при оплате.', tags: ['Mobile', 'Fintech', 'Data'], tone: 'from-emerald-400/30 via-cyan-500/10 to-transparent', coverImage: '/projects/smart-wallet-cover.webp', caseUrl: '/projects/smart-wallet', figmaUrl: 'https://www.figma.com/design/AJwgIoGWhr0TGnjoakth3O/Smart-Wallet-кейс-чемпионат-?node-id=235-317&t=oJK4tn3ovSmpo3KN-0' },
 ] as const
 

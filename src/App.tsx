@@ -10,6 +10,7 @@ import CertificateCollectionPage from '@/pages/certificate-collection-page'
 import EventPage from '@/pages/event-page'
 import HeartOfUdmurtiaPage from '@/pages/heart-of-udmurtia-page'
 import SmartWalletPage from '@/pages/smart-wallet-page'
+import SwipeCsatPage from '@/pages/swipe-csat-page'
 import { eventPhotos, events } from '@/constants/content'
 
 const HomePage = lazy(() => import('@/pages/home-page'))
@@ -60,6 +61,8 @@ export default function App() {
         <HeartOfUdmurtiaPage />
       ) : pathname === '/projects/smart-wallet' ? (
         <SmartWalletPage />
+      ) : pathname === '/projects/swipe-csat' ? (
+        <SwipeCsatPage />
       ) : (
         <>
           <Navbar onOpenRequest={() => setRequestOpen(true)} />

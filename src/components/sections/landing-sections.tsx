@@ -30,7 +30,7 @@ function LogoCursorField() {
 
   return (
     <div className="hero-logo-cursor-field absolute -inset-[8%]" onPointerEnter={moveCursor} onPointerMove={moveCursor} onPointerLeave={() => { setCursor((current) => ({ ...current, visible: false })); setTrail([]) }}>
-      <img src={teamLogo} alt="Логотип команды Hatoms" className="absolute inset-[20%] z-10 h-[60%] w-[60%] object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" />
+      <img src={teamLogo} alt="Логотип команды Hatoms" className="pointer-events-none absolute inset-[20%] z-10 h-[60%] w-[60%] object-contain drop-shadow-[0_0_35px_rgba(124,58,237,.45)]" />
       <div className="pointer-events-none absolute inset-0 z-20 hidden overflow-visible md:block" aria-hidden="true">
         {trail.map((point, index) => <span key={point.id} className="hero-logo-cursor-trail" style={{ left: point.x, top: point.y, opacity: (index + 1) / (trail.length + 2) }} />)}
         {cursor.visible && <div className="hero-logo-cursor" style={{ left: cursor.x, top: cursor.y }}>
@@ -44,7 +44,7 @@ function LogoCursorField() {
 
 function LegacyHero() {
   const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
-  return <section id="home" className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-6xl items-center px-5 pb-20 pt-24 sm:px-8"><div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_.85fr]"><motion.div {...reveal}><p className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[.24em] text-cyan-200/70"><Sparkles className="h-3.5 w-3.5" /> Digital product studio</p><h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Placeholder <span className="text-gradient">Title</span></h1><p className="mt-7 max-w-xl text-pretty text-base leading-7 text-zinc-400 sm:text-lg">We create digital experiences for ideas that refuse to stay ordinary. Placeholder copy for a future team story.</p><div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div></motion.div><motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md"><div className="absolute inset-[13%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" /><div className="absolute inset-[23%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" /><div className="absolute inset-[33%] grid place-items-center rounded-full bg-gradient-to-br from-cyan-200 to-violet-500 text-4xl text-black shadow-[0_0_70px_rgba(124,58,237,.45)]">✦</div><div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div><div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div></motion.div></div></section>
+  return <section id="home" className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-6xl items-center px-5 pb-20 pt-24 sm:px-8"><div className="grid w-full items-center gap-12 lg:grid-cols-[1.15fr_.85fr]"><motion.div {...reveal}><p className="mb-6 flex items-center gap-2 text-xs uppercase tracking-[.24em] text-cyan-200/70"><Sparkles className="h-3.5 w-3.5" /> Студия цифровых продуктов</p><h1 className="max-w-3xl text-balance text-6xl font-semibold leading-[.93] tracking-[-.075em] text-white sm:text-7xl lg:text-8xl">Идеи становятся <span className="text-gradient">продуктами</span></h1><p className="mt-7 max-w-xl text-pretty text-base leading-7 text-zinc-400 sm:text-lg">Создаём цифровые решения для задач, которым важно стать реальностью.</p><div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => scroll('#projects')}>Подробнее</Button><Button variant="secondary" onClick={() => scroll('#projects')}>Наши проекты</Button></div></motion.div><motion.div initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: .15 }} className="relative mx-auto aspect-square w-full max-w-md"><div className="absolute inset-[13%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" /><div className="absolute inset-[23%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" /><div className="absolute inset-[33%] grid place-items-center rounded-full bg-gradient-to-br from-cyan-200 to-violet-500 text-4xl text-black shadow-[0_0_70px_rgba(124,58,237,.45)]">✦</div><div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Фронтенд и мобильная разработка</div><div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">ML и AI</div></motion.div></div></section>
 }
 
 export function Hero() {
@@ -63,8 +63,8 @@ export function Hero() {
           <div className="absolute inset-[10%] rounded-full border border-cyan-200/15 bg-cyan-400/[.03] shadow-[0_0_100px_rgba(0,212,255,.15)]" />
           <div className="absolute inset-[18%] rounded-[2rem] border border-violet-300/30 bg-gradient-to-br from-cyan-300/20 via-transparent to-violet-500/30 backdrop-blur-sm motion-safe:animate-[spin_18s_linear_infinite]" />
           <LogoCursorField />
-          <div className="absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Build / 01</div>
-          <div className="absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">Future ready</div>
+          <div className="pointer-events-none absolute left-0 top-1/3 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-cyan-100 backdrop-blur-md">Frontend&Mobile</div>
+          <div className="pointer-events-none absolute bottom-1/4 right-0 rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-xs text-violet-100 backdrop-blur-md">ML&AI</div>
         </motion.div>
       </div>
     </section>
@@ -116,16 +116,15 @@ function ProjectCard({ index, position, cardOffset, cardWidth, isHovered, dimmed
         <div className={`relative aspect-[2.05] overflow-hidden rounded-[1.2rem] bg-[#111827] bg-gradient-to-br ${project.tone}`}>
           <img src={project.coverImage} alt={project.title} className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,6,14,.4),transparent_45%,rgba(4,6,14,.12)),linear-gradient(0deg,rgba(4,6,14,.48),transparent_58%)]" />
-          {!('caseUrl' in project) && <span className="absolute left-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/20 font-mono text-[11px] tracking-widest text-white/80 backdrop-blur">{project.number}</span>}
-          <span className="absolute bottom-4 left-5 text-[10px] uppercase tracking-[.24em] text-white/70">Selected work</span>
+          <span className="absolute bottom-4 left-5 text-[10px] uppercase tracking-[.24em] text-white/70">Проекты команды</span>
           <div className="absolute inset-x-5 bottom-3 h-px bg-gradient-to-r from-cyan-100 via-white/80 to-transparent" />
         </div>
         <div className="relative px-3 pb-3 pt-5">
-          <p className="text-[10px] uppercase tracking-[.22em] text-cyan-100/65">{'caseUrl' in project ? 'Mobile application' : `Проект ${project.number} · Digital product`}</p>
+          <p className="text-[10px] uppercase tracking-[.22em] text-cyan-100/65">Мобильное приложение</p>
           <h3 className="mt-2 text-2xl font-medium tracking-[-.035em] text-white sm:text-[1.7rem]">{project.title}</h3>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">{project.description}</p>
           <div className="mt-5 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-white/[.08] bg-white/[.055] px-3 py-1.5 text-[10px] font-medium tracking-wide text-zinc-200">{tag}</span>)}</div>
-          {isActive && ('caseUrl' in project ? <Link to={project.caseUrl} onPointerDownCapture={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Подробнее о проекте <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link> : <button type="button" className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Открыть кейс <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></button>)}
+          {isActive && <Link to={project.caseUrl} onPointerDownCapture={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()} className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-cyan-100 transition hover:text-white">Подробнее о проекте <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>}
         </div>
       </div>
     </motion.article>
@@ -180,7 +179,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="relative overflow-visible px-5 py-28 sm:px-8 sm:py-32">
-      <motion.div {...reveal} className="mx-auto max-w-6xl"><SectionHeading eyebrow="Selected work" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div>
+      <motion.div {...reveal} className="mx-auto max-w-6xl"><SectionHeading eyebrow="Проекты команды" title={<>Наши <span className="text-gradient">проекты</span></>} description="Идеи, которым мы придали форму, логику и заметный результат." /></motion.div>
       <motion.div {...reveal} className="project-stage mx-auto mt-12 w-full sm:mt-14">
         <div className="project-stage__halo" aria-hidden="true" />
         <div className="project-stage__viewport">
@@ -231,7 +230,7 @@ function AllCategoriesTechStack() {
     <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8">
       <motion.div {...reveal}>
         <SectionHeading
-          eyebrow="Crafted with precision"
+          eyebrow="Техническая экспертиза"
           title={<>Наш <span className="text-gradient">стек</span></>}
           description="Инструменты и подходы, которые используем для создания продуктов. Наведите курсор на технологию, чтобы увидеть её логотип."
         />
@@ -274,7 +273,7 @@ export function TechStack() {
     <section id="stack" className="mx-auto max-w-6xl px-5 py-28 sm:px-8">
       <motion.div {...reveal}>
         <SectionHeading
-          eyebrow="Crafted with precision"
+          eyebrow="Техническая экспертиза"
           title={<>Наш <span className="text-gradient">стек</span></>}
           description="Ключевые технологии команды и полный стек по направлениям."
         />
@@ -311,7 +310,7 @@ export function TechStack() {
 }
 
 export function Events() {
-  return <section id="events" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="In motion" title={<>Мероприятия и <span className="text-gradient">события</span></>} /></motion.div><div className="mt-12 border-l border-white/10 pl-6 sm:pl-10">{events.map((event, i) => <motion.article key={event.slug} {...reveal} transition={{ duration: .6, delay: i * .1 }} className="relative mb-10 last:mb-0"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-[#05060a] bg-cyan-300 shadow-[0_0_14px_#00d4ff] sm:-left-[47px]" /><p className="font-mono text-xs tracking-wider text-cyan-200/70">{event.date}</p><Link to={`/events/${event.slug}`} className="group mt-3 block rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-violet-300/30 hover:bg-white/[.04] focus:outline-none focus:ring-2 focus:ring-cyan-300/70"><h3 className="text-lg font-medium text-white">{event.title}</h3>{(event.summary || event.subtitle) && <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{event.summary || event.subtitle}</p>}<span className="mt-4 inline-flex items-center gap-2 text-sm text-violet-200">Подробнее <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></Link></motion.article>)}</div></section>
+  return <section id="events" className="mx-auto max-w-6xl px-5 py-28 sm:px-8"><motion.div {...reveal}><SectionHeading eyebrow="Опыт команды" title={<>Мероприятия и <span className="text-gradient">события</span></>} /></motion.div><div className="mt-12 border-l border-white/10 pl-6 sm:pl-10">{events.map((event, i) => <motion.article key={event.slug} {...reveal} transition={{ duration: .6, delay: i * .1 }} className="relative mb-10 last:mb-0"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-[#05060a] bg-cyan-300 shadow-[0_0_14px_#00d4ff] sm:-left-[47px]" /><p className="font-mono text-xs tracking-wider text-cyan-200/70">{event.date}</p><Link to={`/events/${event.slug}`} className="group mt-3 block rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-violet-300/30 hover:bg-white/[.04] focus:outline-none focus:ring-2 focus:ring-cyan-300/70"><h3 className="text-lg font-medium text-white">{event.title}</h3>{(event.summary || event.subtitle) && <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">{event.summary || event.subtitle}</p>}<span className="mt-4 inline-flex items-center gap-2 text-sm text-violet-200">Подробнее <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></Link></motion.article>)}</div></section>
 }
 
 export function ProjectRequestModal({ open, onClose }: { open: boolean; onClose: () => void }) {
