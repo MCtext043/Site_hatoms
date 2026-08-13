@@ -17,6 +17,7 @@
     "deploy:logs": "docker compose -f docker-compose.prod.yml logs -f"
   },
   "dependencies": {
+    "@elemeta/glasswave": "^0.4.0",
     "@radix-ui/react-slot": "latest",
     "@tailwindcss/vite": "latest",
     "class-variance-authority": "latest",
