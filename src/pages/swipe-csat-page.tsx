@@ -51,10 +51,10 @@ export default function SwipeCsatPage() {
   }, [lightbox])
 
   return <main className="mx-auto min-h-screen max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
-    <button type="button" onClick={() => navigate('/', { state: { scrollTo: 'projects' } })} className="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-emerald-100"><ArrowLeft className="h-4 w-4" />Вернуться к проектам</button>
+    <button type="button" onClick={() => navigate('/', { state: { scrollTo: 'projects' } })} className="inline-flex items-center gap-2 text-sm text-white transition hover:text-white/75"><ArrowLeft className="h-4 w-4" />Вернуться к проектам</button>
     <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }} className="mt-10">
       <p className="text-xs uppercase tracking-[.2em] text-emerald-200/70">Мобильное приложение · Customer experience</p>
-      <div className="mt-4 max-w-4xl"><h1 className="text-4xl font-semibold tracking-[-.05em] text-white sm:text-6xl">Swipe CSAT</h1><p className="mt-5 text-lg leading-8 text-zinc-300">Концепт мобильного сервиса, который помогает собирать обратную связь о товарах и превращать впечатления клиентов в понятные сигналы для бизнеса.</p></div>
+      <div className="mt-4 max-w-4xl"><h1 className="text-4xl font-semibold tracking-[-.05em] text-white sm:text-6xl">Swipe CSAT</h1><p className="mt-5 text-lg leading-7 text-zinc-300">Концепт мобильного сервиса, который помогает собирать обратную связь о товарах и превращать впечатления клиентов в понятные сигналы для бизнеса.</p></div>
 
       <section className="mt-16 grid gap-5 lg:grid-cols-[.9fr_1.1fr]" aria-labelledby="challenge-heading">
         <div className="rounded-3xl border border-white/10 bg-white/[.035] p-6 sm:p-8"><p className="text-xs uppercase tracking-[.2em] text-emerald-200/70">Задача</p><h2 id="challenge-heading" className="mt-3 text-2xl font-medium text-white">Не просто оценка, а причина оценки</h2><p className="mt-4 text-sm leading-7 text-zinc-400">Заказчику требовался сервис для оценки удовлетворённости клиентов по товарам и услугам. В основе — набор характеристик опыта: приложение показывает пользователю две-три из них и помогает быстро выразить впечатление.</p></div>

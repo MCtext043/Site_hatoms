@@ -98,13 +98,13 @@ export default function EventPage({ title, date, subtitle, description, gallery,
   }, [activeImage, activePhoto, activePresentation, activeBigGalleryItem, gallery, photos, presentation, bigGalleryItems.length])
 
   return <main className="mx-auto min-h-screen max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
-    <button type="button" onClick={() => navigate('/', { state: { scrollTo: 'events' } })} className="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-cyan-100"><ArrowLeft className="h-4 w-4" />Вернуться к мероприятиям</button>
+    <button type="button" onClick={() => navigate('/', { state: { scrollTo: 'events' } })} className="inline-flex items-center gap-2 text-sm text-white transition hover:text-white/75"><ArrowLeft className="h-4 w-4" />Вернуться к мероприятиям</button>
     <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }} className="mt-10">
       <p className="text-xs uppercase tracking-[.2em] text-cyan-200/70">Наши мероприятия</p>
       <h1 className="mt-3 max-w-4xl text-4xl font-semibold tracking-[-.05em] text-white sm:text-6xl">{title}</h1>
-      {subtitle && <p className="mt-5 max-w-3xl text-lg leading-8 text-zinc-300">{subtitle}</p>}
-      <div className="mt-8 inline-flex items-center gap-3 rounded-xl border border-cyan-200/15 bg-cyan-300/[.05] px-4 py-3 text-sm text-cyan-100"><CalendarDays className="h-4 w-4" /><span>{date}</span></div>
-      {description && <p className="mt-8 max-w-5xl whitespace-pre-line text-base leading-8 text-zinc-300 sm:text-lg">{description}</p>}
+      {subtitle && <p className="mt-5 max-w-3xl text-lg leading-8 text-white">{subtitle}</p>}
+      <div className="mt-8 inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/[.05] px-4 py-3 text-sm text-white"><CalendarDays className="h-4 w-4" /><span>{date}</span></div>
+      {description && <p className="mt-8 max-w-5xl whitespace-pre-line text-base leading-8 text-white sm:text-lg">{description}</p>}
 
       {hasGallery && <section className="mt-16" aria-labelledby="gallery-heading">
         <div className="flex items-center gap-3"><Images className="h-5 w-5 text-cyan-200" /><h2 id="gallery-heading" className="text-2xl font-medium text-white">Проект</h2></div>

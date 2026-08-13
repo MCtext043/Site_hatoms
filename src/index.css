@@ -65,6 +65,9 @@ h1, h2, h3 { font-family: var(--font-display); }
 @media (hover: hover) and (pointer: fine) { .project-card--preview { cursor: url('./assets/cursor-terminal-link.svg') 10 10, pointer; } }
 .project-nav-button { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgba(255, 255, 255, .13); border-radius: 999px; background: rgba(255, 255, 255, .045); color: #e4e4e7; transition: .25s ease; }
 .project-nav-button:hover { transform: translateY(-2px); border-color: rgba(165, 243, 252, .55); background: rgba(103, 232, 249, .12); color: white; box-shadow: 0 0 24px rgba(34, 211, 238, .15); }
+main section[aria-labelledby] > .flex.items-center.gap-3 { align-items: flex-start; }
+main section[aria-labelledby] > .flex.items-center.gap-3 > svg { color: rgb(165 243 252); }
+main section[aria-labelledby] > .flex.items-center.gap-3 > div > p { color: rgb(165 243 252 / .7); }
 @media (max-width: 1023px) {
   .project-stage__scene { min-height: 26rem; }
 }

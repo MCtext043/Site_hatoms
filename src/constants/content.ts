@@ -2,7 +2,7 @@ export const navigation = [
   { label: 'Главная', href: '#home' },
   { label: 'Наши проекты', href: '#projects' },
   { label: 'Как работаем', href: '#process' },
-  { label: 'Наш стек', href: '#stack' },
+  { label: 'Программное обеспечение', href: '#stack' },
   { label: 'Мероприятия', href: '#events' },
   { label: 'Контакты', href: '#contacts' },
 ] as const

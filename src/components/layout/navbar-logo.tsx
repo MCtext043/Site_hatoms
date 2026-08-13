@@ -37,7 +37,7 @@ export function Navbar({ onOpenRequest }: { onOpenRequest: () => void }) {
         <div className="hidden items-center gap-6 lg:flex">
           {navigation.slice(0, -1).map((item) => <button type="button" key={item.href} onClick={() => go(item.href)} className="min-h-11 text-sm text-zinc-400 transition hover:text-white">{item.label}</button>)}
         </div>
-        <button type="button" onClick={onOpenRequest} className="hidden min-h-11 text-sm text-cyan-200 lg:block">Оставить заявку →</button>
+        <button type="button" onClick={onOpenRequest} className="hidden min-h-11 text-sm text-white transition hover:text-white/75 lg:block">Оставить заявку →</button>
         <button type="button" className="grid h-11 w-11 place-items-center text-zinc-200 lg:hidden" onClick={() => setOpen(!open)} aria-label={open ? 'Закрыть навигацию' : 'Открыть навигацию'} aria-expanded={open} aria-controls="mobile-navigation">{open ? <X /> : <Menu />}</button>
       </nav>
       <AnimatePresence>

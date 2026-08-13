@@ -7,8 +7,8 @@ export function Eyebrow({ children }: { children: ReactNode }) {
   return <p className="mb-5 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.22em] text-cyan-200/70"><span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_14px_#00d4ff]" />{children}</p>
 }
 
-export function SectionHeading({ eyebrow, title, description }: { eyebrow: string; title: ReactNode; description?: string }) {
-  return <div className="max-w-2xl"><Eyebrow>{eyebrow}</Eyebrow><h2 className="text-balance text-4xl font-semibold tracking-[-0.055em] text-white sm:text-5xl">{title}</h2>{description && <p className="mt-5 max-w-xl text-pretty text-base leading-7 text-zinc-400">{description}</p>}</div>
+export function SectionHeading({ eyebrow, title, description, descriptionClassName }: { eyebrow: string; title: ReactNode; description?: string; descriptionClassName?: string }) {
+  return <div className="max-w-2xl"><Eyebrow>{eyebrow}</Eyebrow><h2 className="text-balance text-4xl font-semibold tracking-[-0.055em] text-white sm:text-5xl">{title}</h2>{description && <p className={cn('mt-5 max-w-xl text-pretty text-base leading-7 text-zinc-400', descriptionClassName)}>{description}</p>}</div>
 }
 
 type ButtonProps = Omit<HTMLMotionProps<'button'>, 'children'> & {
